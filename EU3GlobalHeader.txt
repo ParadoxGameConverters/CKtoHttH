@@ -1,0 +1,455 @@
+date="1399.10.14"
+monarch=5000
+cardinal=1
+leader=5000
+advisor=5000
+rebel=1
+unit=5000
+flags=
+{
+}
+gameplaysettings=
+{
+    setgameplayoptions=
+    {
+0 0 0 0 0 0 0 2 0 1 1 0 0     }
+}
+rebel_faction=
+{
+    id=
+    {
+        id=36
+        type=40
+    }
+    type="pretender_rebels"
+    name="Ming Pretender Rebels"
+    heretic="Taoist"
+    country="MNG"
+    independence="---"
+    culture="chihan"
+    religion="confucianism"
+    government="despotic_monarchy"
+    province=695
+    leader=
+    {
+        id=1185
+        type=38
+    }
+    army=
+    {
+        id=37
+        type=40
+    }
+    provinces=
+    {
+        695     }
+}
+rebel_faction=
+{
+    id=
+    {
+        id=95
+        type=40
+    }
+    type="revolutionary_rebels"
+    name="Kanem Bornuan Revolutionaries"
+    heretic="Sikh"
+    country="KBO"
+    independence="---"
+    culture="mali"
+    religion="sunni"
+    government="tribal_federation"
+    province=1158
+    leader=
+    {
+        id=1186
+        type=38
+    }
+    army=
+    {
+        id=96
+        type=40
+    }
+    provinces=
+    {
+        1158     }
+}
+noreligion=
+{
+}
+catholic=
+{
+}
+protestant=
+{
+}
+reformed=
+{
+}
+orthodox=
+{
+}
+sunni=
+{
+}
+shiite=
+{
+}
+buddhism=
+{
+}
+hinduism=
+{
+}
+confucianism=
+{
+}
+shinto=
+{
+}
+animism=
+{
+}
+shamanism=
+{
+}
+papacy={
+}
+trade=
+{
+    cot=
+    {
+        location=45
+    }
+    cot=
+    {
+        location=101
+    }
+    cot=
+    {
+        location=112
+    }
+    cot=
+    {
+        location=183
+    }
+    cot=
+    {
+        location=224
+    }
+    cot=
+    {
+        location=227
+    }
+    cot=
+    {
+        location=310
+    }
+    cot=
+    {
+        location=358
+    }
+    cot=
+    {
+        location=429
+    }
+    cot=
+    {
+        location=431
+    }
+    cot=
+    {
+        location=454
+        stagnation=0.041
+        value=125.495
+        level=5
+        GOL=
+        {
+            level=1
+            value=0.876
+            priority=0
+        }
+        TIM=
+        {
+            level=3
+            value=0.204
+            priority=0
+        }
+        DLH=
+        {
+            level=1
+            value=1.548
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=464
+    }
+    cot=
+    {
+        location=503
+        stagnation=0.000
+        value=186.027
+        level=6
+        TIM=
+        {
+            level=1
+            value=0.024
+            priority=0
+        }
+        DLH=
+        {
+            level=1
+            value=2.232
+            priority=0
+        }
+        KHD=
+        {
+            level=1
+            value=2.232
+            priority=0
+        }
+        SND=
+        {
+            level=3
+            value=7.068
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=559
+        stagnation=0.000
+        value=308.392
+        level=6
+        AHM=
+        {
+            level=3
+            value=11.760
+            priority=0
+        }
+        DLH=
+        {
+            level=1
+            value=3.756
+            priority=0
+        }
+        KTH=
+        {
+            level=1
+            value=3.756
+            priority=0
+        }
+        MLB=
+        {
+            level=1
+            value=3.756
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=596
+        stagnation=0.000
+        value=226.277
+        level=7
+        AYU=
+        {
+            level=1
+            value=2.736
+            priority=0
+        }
+        CHA=
+        {
+            level=1
+            value=2.736
+            priority=0
+        }
+        MKS=
+        {
+            level=1
+            value=2.736
+            priority=0
+        }
+        MLC=
+        {
+            level=4
+            value=13.356
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=685
+        stagnation=0.000
+        value=626.464
+        level=11
+        JAP=
+        {
+            level=2
+            value=15.624
+            priority=0
+        }
+        KHA=
+        {
+            level=1
+            value=7.548
+            priority=0
+        }
+        LXA=
+        {
+            level=1
+            value=7.548
+            priority=0
+        }
+        MNG=
+        {
+            level=3
+            value=23.832
+            priority=0
+        }
+        OIR=
+        {
+            level=1
+            value=7.548
+            priority=0
+        }
+        RYU=
+        {
+            level=1
+            value=7.548
+            priority=0
+        }
+        TAU=
+        {
+            level=1
+            value=7.548
+            priority=0
+        }
+        TIB=
+        {
+            level=1
+            value=7.548
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=808
+        stagnation=0.208
+        value=46.112
+        level=4
+        CHM=
+        {
+            level=1
+            value=0.180
+            priority=0
+        }
+        INC=
+        {
+            level=3
+            value=0.636
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=852
+        stagnation=0.000
+        value=382.488
+        level=3
+        AZT=
+        {
+            level=3
+            value=5.532
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=1021
+        stagnation=0.000
+        value=177.412
+        level=6
+        JAP=
+        {
+            level=3
+            value=6.792
+            priority=0
+        }
+        MNG=
+        {
+            level=2
+            value=4.452
+            priority=0
+        }
+        RYU=
+        {
+            level=1
+            value=2.160
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=1132
+        stagnation=0.041
+        value=86.769
+        level=5
+        ASH=
+        {
+            level=1
+            value=0.792
+            priority=0
+        }
+        MAL=
+        {
+            level=3
+            value=2.532
+            priority=0
+        }
+        SON=
+        {
+            level=1
+            value=0.792
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=1201
+        stagnation=0.000
+        value=154.072
+        level=4
+        TRP=
+        {
+            level=1
+            value=1.884
+            priority=0
+        }
+        ZAN=
+        {
+            level=3
+            value=4.452
+            priority=0
+        }
+    }
+    cot=
+    {
+        location=1744
+    }
+    cot=
+    {
+        location=1066
+        stagnation=0.208
+        value=50.132
+        level=1
+        OIR=
+        {
+            level=1
+            value=0.576
+            priority=0
+        }
+    }
+}

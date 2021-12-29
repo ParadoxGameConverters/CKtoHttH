@@ -1,0 +1,1 @@
+java -Xms1000m -Xmx1000m -cp CK2HttT.jar net.sourceforge.ck2httt.CK2HttT

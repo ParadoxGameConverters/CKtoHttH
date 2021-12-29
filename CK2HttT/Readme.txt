@@ -1,4 +1,4 @@
-# CKtoHttHCrusader Kings to Heir to the Throne Save Game Mod by Stephen May (idhrendur).
+Crusader Kings to Heir to the Throne Save Game Mod by Stephen May (idhrendur).
 
 
 OBJECT
@@ -42,7 +42,7 @@ Use the CKmod.bat.
 If this fails for some reason, you can resort to the command line and directly launch
 the java executable in the following way:
 
-java -Xms500m -Xmx500m -jar CK2HttT.jar CKinstallDir EU3installDir savegame 
+java -Xms500m -Xmx500m -jar CKmod.jar CKinstallDir EU3installDir savegame 
 
 The -Xm parameters are required because the CK saves are usually quite large, and the java machine may 
 require a lot of memory. In some special cases, you might even have to increase this.
@@ -84,8 +84,8 @@ CONTENT
 
 This should contain the following files:
 
-CK2HttT.bat		A script to easily launch the conversion program
-CK2HttT.jar		The java archive to execute
+CKmod.bat		A script to easily launch the conversion program
+CKmod.jar		The java archive to execute
 cvdata.txt		Data file for the converter
 EU3CountryHeader	Data for writing the save file
 EU3DistributionHeader	Data for writing the save file
@@ -105,7 +105,7 @@ CREDITS
 -------
 
 This was built from Richard Ulmont Campbell's (Ulmont) save game converter,
-which was built from Yves PrÃ©lot's Mod converter, in which he says:
+which was built from Yves Prélot's Mod converter, in which he says:
 I admit to having stolen from Halsten his county to province conversion list
 	(published in his thread) and adapted it to my own needs. Everything else I have done myself.
 

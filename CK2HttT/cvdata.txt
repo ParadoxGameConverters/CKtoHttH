@@ -1,0 +1,4413 @@
+#conversion data
+
+#NOTE : not converted
+# => COT: no serious reason to set COT differently than historical positions.
+# => Technologies: in vanilla all nations start with the same levels from latin to new_world. There
+#		is no serious reason to do things differently here.
+# => Treasury: partially converted.  Gold is divided by 50, to a maximum of double the normal start.
+# => Relationship level: no serious reason to not take the defaults, and considering how countries
+#		are folded together no real sane way to try and assign relationships.  These defaults do
+#		take into account the current state of relationships (alliances, vassals, etc.).
+
+#Outstanding items:
+# => Requires 4.1 beta patch
+# => Province mapping needs review
+# => Culture mappings needs review
+# => Country tag mappings needs review
+# => Heirs are not transferred over
+# => Cardinals will be generated once the game is loaded and unpaused.
+# => Does not transfer existing rebels over (from eu3 non-Europe or from CK).
+# => Non-european nations start with no rulers.
+
+
+#History from version 1.0.0
+# 1.0.0 => created from CK2EU3 version 1.30
+# 1.1.0 => updated to work with the 4.1 beta patch
+
+
+#-----------------------------------------------
+#rules for converting a Ruler / Adviser / Leader
+#-----------------------------------------------
+character = {
+
+#	Stats are converted as follows : stewardship = adm, martial = military, diplomacy = diplomacy
+#	Intrigue may give a slight bonus to all three stats as it shows their political ability.
+#	In effect, 1/3 intrigue is added to the other stats before conversion.
+#	All possible integer values must be converted here (no holes allowed in the table).
+#	The other two stats are ignored.
+
+	ruler_stats = {
+		-11 =  0.0
+		-10 =  0.0
+		-09 =  0.2
+		-08 =  0.4
+		-07 =  0.6
+		-06 =  0.8
+		-05 =  1.0
+		-04 =  1.2
+		-03 =  1.4
+		-02 =  1.6
+		-01 =  1.8
+		 00 =  2.0
+		 01 =  2.2
+		 02 =  2.5
+		 03 =  2.8
+		 04 =  3.1
+		 05 =  3.4
+		 06 =  3.7
+		 07 =  4.0
+		 08 =  4.5
+		 09 =  5.0
+		 10 =  5.5
+		 11 =  6.0
+		 12 =  6.5
+		 13 =  7.0
+		 14 =  7.5
+		 15 =  8.0
+		 16 =  9.0
+		 17 = 10.0
+		 18 = 11.0
+		 19 = 11.0
+		 20 = 11.0
+		 21 = 11.0
+		 22 = 11.0
+		 23 = 11.0
+		 24 = 11.0
+	}
+
+#	The effect of traits modifies the resulting stat after conversion in the previous table
+	ruler_traits = {
+		amateurish_pettifogger		= { adm=-0.1 mil=-0.5 dip= 0.3 }
+		arbitrary			= { adm=-0.4 mil= 0.4 dip= 0.0 }
+		brilliant_strategist		= { adm= 0.8 mil= 4.0 dip= 0.0 }
+		charismatic_negotiator		= { adm= 0.7 mil= 0.3 dip= 1.9 }
+		chaste				= { adm=-0.1 mil=-0.1 dip= 0.3 }
+		clubfooted			= { adm= 0.0 mil=-0.4 dip= 0.0 }
+		court_education			= { adm= 0.5 mil= 0.5 dip= 0.5 }
+		coward				= { adm= 0.1 mil=-0.3 dip= 0.1 }
+		cruel				= { adm= 0.0 mil= 0.4 dip= 0.0 }
+		deceitful			= { adm= 0.1 mil= 0.1 dip=-0.3 }
+		depression			= { adm=-0.5 mil=-0.5 dip=-0.5 }
+		detached_priest			= { adm=-0.3 mil=-0.3 dip= 0.5 }
+		ecclesiastical_education	= { adm= 0.5 mil= 0.1 dip= 0.9 }
+		energetic			= { adm=-0.1 mil= 0.3 dip= 0.3 }
+		flamboyant_schemer		= { adm= 0.3 mil= 0.3 dip= 0.7 }
+		forgiving			= { adm=-0.1 mil=-0.1 dip= 0.3 }
+		fortune_builder			= { adm= 1.7 mil= 0.1 dip= 0.9 }
+		generous			= { adm=-0.4 mil= 0.0 dip= 0.0 }
+		grey_eminence			= { adm= 0.8 mil= 0.4 dip= 3.6 }
+		harelip				= { adm= 0.0 mil= 0.0 dip=-0.4 }
+		hole_in_the_pocket		= { adm=-0.7 mil=-0.3 dip= 0.1 }
+		honest				= { adm=-0.1 mil=-0.1 dip= 0.3 }
+		hunchback			= { adm= 0.0 mil=-0.4 dip= 0.0 }
+		illness				= { adm=-0.5 mil=-0.5 dip=-0.5 }
+		illusive_shadow			= { adm= 1.5 mil= 1.5 dip= 1.9 }
+		inbred				= { adm=-2.7 mil=-2.7 dip=-2.7 }
+		indulgent			= { adm= 0.0 mil= 0.0 dip=-0.4 }
+		intestinal_worm			= { adm= 0.5 mil= 0.5 dip=-0.7 }
+		intricate_webweaver		= { adm= 0.9 mil= 0.9 dip= 1.3 }
+		just				= { adm= 0.4 mil=-0.4 dip= 0.0 }
+		kinslayer			= { adm= 0.0 mil= 0.0 dip=-0.8 }
+		knowledged_tactician		= { adm= 0.7 mil= 2.7 dip=-0.1 }
+		lazy				= { adm=-0.3 mil=-0.3 dip= 0.1 }
+		lisp				= { adm= 0.0 mil= 0.0 dip=-0.4 }
+		lustful				= { adm= 0.0 mil= 0.0 dip=-0.4 }
+		maniac				= { adm=-2.7 mil=-2.7 dip=-2.7 }
+		martial_cleric			= { adm= 0.3 mil= 1.9 dip= 1.1 }
+		martial_education		= { adm= 0.1 mil= 0.9 dip= 0.5 }
+		mastermind_theologian		= { adm= 1.9 mil= 0.7 dip= 2.3 }
+		merciful			= { adm= 0.0 mil=-0.4 dip= 0.0 }
+		midas_touched			= { adm= 2.5 mil= 0.1 dip= 1.3 }
+		misguided_warrior		= { adm=-0.4 mil= 0.8 dip=-0.4 }
+		naive_wirepuller		= { adm=-0.3 mil=-0.3 dip= 0.1 }
+		plagueinfested			= { adm=-2.7 mil=-2.7 dip=-2.7 }
+		pneumonia			= { adm=-2.7 mil=-2.7 dip=-2.7 }
+		proven_accountant		= { adm= 0.8 mil= 0.0 dip= 0.4 }
+		proven_dealbreaker		= { adm= 0.5 mil= 0.1 dip= 0.9 }
+		reckless			= { adm= 0.1 mil=-0.3 dip= 0.1 }
+		sceptical			= { adm= 0.1 mil= 0.1 dip= 0.1 }
+		schizofrenia			= { adm=-2.1 mil=-2.1 dip=-2.1 }
+		scholarly_theologian		= { adm= 1.2 mil= 0.4 dip= 1.6 }
+		selfish				= { adm= 0.4 mil= 0.0 dip= 0.0 }
+		stress_symptom			= { adm=-0.5 mil=-0.5 dip=-0.5 }
+		stutter				= { adm=-0.7 mil=-0.3 dip=-1.5 }
+		suspicious			= { adm= 0.1 mil= 0.1 dip=-0.7 }
+		temperate			= { adm= 0.0 mil= 0.0 dip= 0.4 }
+		tough_soldier			= { adm= 0.1 mil= 1.7 dip=-0.3 }
+		trusting			= { adm=-0.3 mil=-0.3 dip= 0.1 }
+		valorous			= { adm=-0.3 mil= 0.1 dip=-0.3 }
+		vengeful			= { adm= 0.1 mil= 0.1 dip=-0.3 }
+		war_invalid			= { adm= 0.0 mil=-0.8 dip= 0.0 }
+		wise				= { adm=-0.1 mil= 0.3 dip= 0.3 }
+		zealous				= { adm= 0.0 mil= 0.4 dip= 0.0 }
+	}
+
+	counselor_stats = {
+	HttT = {
+		use = { type=stand_alone }
+		convert = {
+		army_reformer = {
+			mil = { -10=-10 0=-3 2=-2 4=-1 7= 0  9=0.5 10=1 11=1.5 }
+			dip = { -10=-10 0=-3 2=-2 4=-1 7= 0 10=0.5 11=1 }
+			int = { -10=-10 0=-3 2=-2 4=-1 7= 0 10=0.5 11=1 }
+		}
+		trader = {
+			dip = { -10=-10 0=-3 2=-2 4=-1 6=-1  8=0.0  9=1 10=1.5 }
+			ste = { -10=-10 0=-3 2=-2 4=-1 6=-1  8=0.0  9=1 10=1.5 }
+		}
+		diplomat = {
+			dip = { -10=-10 1=-3 3=-2 5=-1 8= 0  9=1.0 10=2 11=3.0 }
+		}
+		spymaster = {
+			int = { -10=-10 1=-3 3=-2 5=-1 8= 0  9=1.0 10=2 11=3.0 }
+		}
+		statesman = {
+			ste = { -10=-10 0=-3 2=-2 4=-1 7= 0  9=0.5 10=1 11=1.5 }
+			dip = { -10=-10 0=-3 2=-2 4=-1 7= 0  9=0.5 10=1 11=1.5 }
+			int = { -10=-10 0=-3 2=-2 4=-1 7= 0  9=0.5 10=1 11=1.5 }
+		}
+		treasurer = {
+			ste = { -10=-10 0=-3 3=-2 5=-1 8= 0  9=1.0 10=2 11=3.0 }
+		}
+		}
+	}
+	}
+
+	counselor_traits = {
+		chaste				= { philosopher=1 }
+		zealous				= { theologian=1 }
+		lisp				= { diplomat=-1 trader=-1 }
+		harelip				= { diplomat=-1 trader=-1 }
+		lustful				= { philosopher=-1 spymaster=-1 diplomat=-1 trader=-1 }
+		stutter				= { diplomat=-1 trader=-1 spymaster=-1 }
+		sceptical			= { philosopher=1 }
+		kinslayer			= { diplomat=-1 }
+		arbitrary			= { statesman=-1 diplomat=-1 trader=-1 }
+		deceitful			= { spymaster=1 }
+		energetic			= { army_reformer=1 diplomat=1 trader=1 statesman=1 }
+		forgiving			= { diplomat=1 philosopher=1 statesman=1 }
+		generous			= { trader=-1 treasurer=-1 philosopher=1 statesman=1 }
+		indulgent			= { diplomat=-1 philosopher=1 }
+		just				= { statesman=2 philosopher=1 treasurer=1 theologian=1 }
+		suspicious			= { diplomat=-1 spymaster=1 }
+		selfish				= { treasurer=1 trader=1 diplomat=-1 }
+		wise				= { all=1 statesman=1 }
+		court_education			= { diplomat=1 spymaster=1 }
+		honest				= { diplomat=1 spymaster=-1 philosopher=1 statesman=1 trader=2 }
+		lazy				= { all=-1 philosopher=1 }
+		merciful			= { philosopher=1 statesman=1 }
+		reckless			= { philosopher=-1 statesman=-1 }
+		temperate			= { philosopher=1 diplomat=1 theologian=1 }
+		trusting			= { diplomat=-1 trader=-1 philosopher=-1 spymaster=-1 }
+		valorous			= { army_reformer=1 philosopher=-1 }
+		vengeful			= { diplomat=-1 statesman=-1 philosopher=-1 }
+		amateurish_pettifogger		= { diplomat=1 }
+		proven_dealbreaker		= { diplomat=2 trader=1 }
+		charismatic_negotiator		= { diplomat=3 trader=1 statesman=1 }
+		grey_eminence			= { diplomat=4 spymaster=1 statesman=2 }
+		naive_wirepuller		= { spymaster=-1 }
+		flamboyant_schemer		= { spymaster=2 }
+		intricate_webweaver		= { spymaster=3 diplomat=1 statesman=1 }
+		illusive_shadow			= { spymaster=4 diplomat=1 statesman=2 }
+		martial_cleric			= { army_reformer=2 }
+		detached_priest			= { theologian=1 }
+		ecclesiastical_education	= { theologian=1 }
+		scholarly_theologian		= { theologian=3 philosopher=1 }
+		mastermind_theologian		= { theologian=5 philosopher=2 diplomat=1 }
+		hole_in_the_pocket		= { treasurer=-1 }
+		proven_accountant		= { treasurer=2 trader=1 }
+		fortune_builder			= { treasurer=3 trader=3 statesman=1 }
+		midas_touched			= { treasurer=4 trader=4 statesman=2 }
+		martial_education		= { army_reformer=1 }
+		misguided_warrior		= { army_reformer=1 }
+		tough_soldier			= { army_reformer=2 }
+		knowledged_tactician		= { army_reformer=3.5 }
+		brilliant_strategist		= { army_reformer=5 }
+		schizofrenia			= { reject = 1 }
+		plagueinfested			= { reject = 1 }
+		pneumonia			= { reject = 1 }
+		maniac				= { reject = 1 }
+		inbred				= { all=-3 }
+		depression			= { all=-1 }
+		stress_symptom			= { all=-0.5 }
+		illness				= { all=-0.5 }
+	}
+
+#	For a leader, the only stat examined is martial.
+#	We determine the maximal ability for the leader by reading the stat and traits for each actual
+#	attribute (fire, shock, maneuver, siege).
+#	The layout is similar to that for advisers; usually, you would only use the martial stat, but
+#	you could actually use the diplomacy or whatever combination should you feel like it.
+	leader_stats = {
+		fire = {
+			mil = {
+				-10=-5.0 00=-4.0 01=-3.0 02=-2.0 03=-1.5 04=-1.0 05=-0.5 06=0.0 07=0.5
+				 08= 1.0 09= 1.5 10= 2.0 11= 2.5 12= 3.0 13= 3.5 14= 4.0 15=4.5		}
+		}
+		shock = {
+			mil = {
+				-10=-5.0 00=-4.0 01=-3.0 02=-2.0 03=-1.5 04=-1.0 05=-0.5 06=0.0 07=0.5
+				 08= 1.0 09= 1.5 10= 2.0 11= 2.5 12= 3.0 13= 3.5 14= 4.0 15=4.5		}
+		}
+		manuever = {
+			mil = {
+				-10=-5.0 00=-4.0 01=-3.0 02=-2.0 03=-1.5 04=-1.0 05=-0.5 06=0.0 07=0.5
+				 08= 1.0 09= 1.5 10= 2.0 11= 2.5 12= 3.0 13= 3.5 14= 4.0 15=4.5		}
+		}
+		siege = {
+			mil = {
+				-10=-3.0 00=-2.0 01=-1.5 02=-1.0 04=-0.5 06= 0.0 08= 0.5 10=1.0 12=1.5
+				 14= 2.0 15= 2.5							}
+		}
+	}
+
+#	Here, you can use pretty much the same modifiers as for advisers, including reject (not
+#	suggested: the realm wouldn't even have one leader), and all.
+	leader_traits = {
+		amateurish_pettifogger		= { fire=-0.5 shock=-0.5 manuever=-0.5 siege=-0.5 }
+		arbitrary			= { fire=0.5 shock=0.5 manuever=-0.5 siege=-0.5 }
+		brilliant_strategist		= { fire=2 shock=2 manuever=4 }
+		charismatic_negotiator		= { shock=0.5 manuever=0.5 siege=0.5 }
+		clubfooted			= { shock=-1 manuever=-1 siege=1 }
+		court_education			= { manuever=1 }
+		coward				= { fire=-0.5 shock=-2 manuever=-0.5 siege=1 }
+		cruel				= { shock=0.5 }
+		deceitful			= { siege=0.5 }
+		depression			= { fire=-0.5 shock=-0.5 manuever=-0.5 siege=-0.5 }
+		detached_priest			= { fire=-0.5 shock=-0.5 manuever=-0.5 siege=-0.5 }
+		ecclesiastical_education	= { }
+		energetic			= { manuever=0.5 siege=-0.5 }
+		flamboyant_schemer		= { }
+		forgiving			= { }
+		fortune_builder			= { }
+		generous			= { }
+		grey_eminence			= { manuever=0.5 }
+		harelip				= { }
+		hole_in_the_pocket		= { }
+		honest				= { }
+		hunchback			= { fire=-0.5 shock=-1.5 manuever=-0.5 siege=0.5 }
+		illness				= { fire=-0.5 shock=-0.5 manuever=-0.5 }
+		illusive_shadow			= { manuever=2 siege=1 }
+		inbred				= { fire=-2 shock=-2 manuever=-2 siege=-2 }
+		indulgent			= { }
+		intestinal_worm			= { }
+		intricate_webweaver		= { manuever=1 siege=0.5 }
+		just				= { fire=-0.5 shock=-0.5 siege=0.5 }
+		kinslayer			= { }
+		knowledged_tactician		= { fire=1 shock=1 manuever=2 }
+		lazy				= { fire=-0.5 shock=-0.5 manuever=-1 siege=0.5 }
+		lisp				= { }
+		lustful				= { }
+		maniac				= { fire=-2 shock=-2 manuever=-2 siege=-2 }
+		martial_cleric			= { fire=1 shock=1 manuever=0.5 siege=0.5 }
+		martial_education		= { fire=0.5 shock=0.5 manuever=0.5 }
+		mastermind_theologian		= { manuever=0.5 siege=0.5 }
+		merciful			= { fire=-0.5 shock=-0.5 siege=0.5 }
+		midas_touched			= { }
+		misguided_warrior		= { fire=0.5 shock=0.5 }
+		naive_wirepuller		= { siege=-0.5 }
+		plagueinfested			= { fire=-2 shock=-2 manuever=-2 siege=-2 }
+		pneumonia			= { fire=-2 shock=-2 manuever=-2 siege=-0.5 }
+		proven_accountant		= { }
+		proven_dealbreaker		= { }
+		reckless			= { fire=-0.5 shock=1 manuever=-1 siege=-0.5 }
+		sceptical			= { }
+		schizofrenia			= { fire=-2 shock=-2 manuever=-2 siege=-2 }
+		scholarly_theologian		= { siege=0.5 }
+		selfish				= { fire=0.5 shock=-0.5 }
+		stress_symptom			= { fire=-0.5 shock=-0.5 manuever=-0.5 }
+		stutter				= { shock=-0.5 }
+		suspicious			= { siege=0.5 }
+		temperate			= { }
+		tough_soldier			= { fire=1 shock=1 }
+		trusting			= { manuever=-0.5 siege=-0.5 }
+		valorous			= { fire=0.5 shock=0.5 }
+		vengeful			= { }
+		war_invalid			= { fire=-1 shock=-2 manuever=1 siege=1 }
+		wise				= { manuever=0.5 siege=0.5 }
+		zealous				= { shock=0.5 }
+	}
+}
+
+
+#---------------------------------------
+#rules for converting a country settings
+#---------------------------------------
+country_conversion = {
+
+#	We assume that the tech group is defined by a combination of culture (primary_culture only) and
+#		religion.
+#	The fields you put here are the rules to use to choose the appropriate tech group.
+#	The name of the field is the tech group the rule applies to (should be western, eastern or
+#		muslim; slim chance for any other)
+#	Field content is:
+#		religion		= religion_name
+#		religious_group	= religion_group_name
+#		culture		= culture_name
+#		culture_group	= culture_group_name
+#		prio			= a number
+#	There should be at least one of the four first fields, and at most only one for each subgroups
+#		(religion,religion_group), (culture,culture_group).
+#	The prio fields indicates the priority of the rule: the most general rules should have a low
+#		priority (0) while the most specific rules should take precedence with a high number.
+#	The lowest priority rules should be able to cover all situations. 
+
+	tech_group = {
+		western = { prio=0 religious_group=christian }
+		muslim  = { prio=0 religious_group=muslim }
+		indian  = { prio=0 religious_group=pagan }
+		eastern = { prio=1 culture_group=south_slavic }
+		eastern = { prio=1 culture_group=west_slavic }
+		eastern = { prio=1 culture_group=east_slavic }
+		eastern = { prio=1 culture_group=byzantine }
+		eastern = { prio=2 culture=turkish }
+		western = { prio=2 culture=slovenian }
+		western = { prio=2 culture=czech }
+		western = { prio=2 culture=schlesian }
+		eastern = { prio=2 culture=berber }
+		eastern = { prio=2 culture=maltese }
+		eastern = { prio=2 culture=maltese }
+	}
+
+#	SLIDERS: note that although the described rules may differ widely, they all use the same
+#		format, so that anything you see in one can be used in another (for example, you could use
+#		buildings in the mercantilism_freetrade rule or laws in the land_naval one.
+#		In the same way, all buildings can be used in the buildings sub-rule, and all advances in
+#		the advances sub-rule.
+
+#	Government type is chosen along a similar scheme as tech_group.
+#	There is one additional optional parameter, which is the government form under CK, and another
+#		that are laws used by the realm (more than one allowed)
+	government = {
+		HttT = {
+			use = { type=stand_alone }
+			convert = {
+				tribal_federation	= { prio=0 religious_group=pagan }
+				theocratic_government	= { prio=0 form=ecclestical }
+				theocratic_government	= { prio=0 form=knight_order }
+				merchant_republic	= { prio=0 form=republican }
+				feudal_monarchy		= { prio=0 form=feudal religious_group=christian }
+				despotic_monarchy	= { prio=1 form=feudal law=royal_preorgatory_law religious_group=christian }
+				administrative_republic	= { prio=1 form=republican religious_group=christian culture_group=germanic }
+				despotic_monarchy	= { prio=0 religious_group=muslim }
+				tribal_despotism	= { prio=1 religious_group=muslim culture=bedouin_arabic }
+				tribal_despotism	= { prio=1 religious_group=muslim culture=al_iraqiya_arabic }
+				tribal_despotism	= { prio=1 religious_group=muslim culture=al_suryah_arabic }
+				tribal_federation	= { prio=1 religious_group=muslim culture_group=persian }
+			}
+		}
+	}
+
+#	Land-Naval policy is set by comparing the number of counties in CK to the modified number of
+#		equipment ports (wharf, harbors, etc...); the total will be averaged and compared to the
+#		step: each step is worth 1 point.
+	land_naval = {
+		buildings = {
+			fishing_wharf		= 1
+			civilian_harbour	= 3
+			naval_harbour		= 7
+			grand_shipyard		= 11
+		}
+		zero = -5
+		step =  2
+	}
+
+#	Mercantilism-Free Trade is set by a similar way, but counting the advances in Commerce
+#	Institutions, Trade Practices, Fairs and Routes. It is assumed that the more advanced you are,
+#	the more mercantilist you would be (mercantilism would be perceived high-tech at the time).
+	mercantilism_freetrade = {
+		advances = {
+			minor_merchant_houses		= 0
+			local_merchant_houses		=-1
+			mint				=-2
+			guilds				=-4
+			reknown_merchant_houses		=-8
+			business_contracts		= 0
+			promissory_note			=-1
+			letters_of_credit		=-2
+			double_entry_bookkeeping	=-4
+			foreign_accreditation		=-8
+			annual_sailing			= 0
+			local_fairs			=-1
+			distant_trading			=-2
+			exotic_trading			=-4
+			international_fairs		=-8
+		}
+		zero =  5
+		step =  3
+	}
+
+#	Serfdom-Freesubject is set by averaging the counties peasant power over the country.
+#	Laws may also influence the final result.
+	serfdom_freesubjects = {
+		power = {
+			peasants =1.0
+		}
+		zero = -5
+		step =  0.05
+		laws = {
+			royal_preorgatory_law	=-2
+			feudal_contract_law	=-1
+			traditional_custom_law	= 0
+			popular_law		= 1
+		}
+	}
+
+#	Centralization-Decentralization is set by computing an average on all counties, depending on its
+#		level of rule: direct (king's own demesne), count (under the rule of a count under the
+#		direct rule of the king), other (under the rule of any other character). Only the
+#		counties actually inside the EU3 realm are counted : those finally belonging to
+#		union/vassal/allied realms are not.
+#	Laws may also influence the final result.
+	centralization_decentralization = {
+		hierarchy = {
+			direct	=-4
+			count	=-2
+			other	= 4
+		}
+		zero = 5
+		step = 0.6
+		laws = {
+			royal_preorgatory_law	=-1
+			traditional_custom	= 0
+			feudal_contract_law	= 1
+			popular_law		= 2
+		}
+	}
+#	Innovative-Narrowminded is mainly set by checking the clergy power (conservative) against the 
+#		burghers power (innovative). The peasant power (conservative) and noble power too are
+#		taken into account, at a different rate.
+#	Laws can also affect the result.
+	innovative_narrowminded = {
+		power = {
+			burghers	=-1.0
+			clergy		= 1.0
+			peasants	= 0.5
+			nobles		=+0.5
+		}
+		zero = 1
+		step = 0.08
+		laws = {
+			regal_supremacy		=-1
+			ecclesical_balance	= 0
+			monastic_supremacy	= 1
+			church_supremacy	= 2
+		}
+	}
+
+#	Aristocracy-Plutocracy is mainly set by checking the noble power (aristocracy) against the
+#		burghers power (plutocracy). The peasant power (plutocracy) and clergy power (aristocracy)
+#		are also taken into account, at a lesser rate.
+#	Laws can also affect the result.
+	aristocracy_plutocracy = {
+		power = {
+			burghers	= 1.0
+			clergy		=-0.5
+			peasants	= 0.5
+			nobles		=-1.0
+		}
+		zero = -2
+		step = 0.05
+		laws = {
+			feudal_contract_law	=-1
+			royal_preorgatory_law	= 0
+			traditional_custom	= 0
+			popular_law		= 1
+		}
+	}
+
+#	Offensive-Defensive setting is determined by the relative levels of offensive and defensive tech
+#		known throughout the realm.
+	offensive_defensive = {
+		advances = {
+			defensive_terrain	= 1
+			positional_combat	= 2
+			missile_barrage		= 4
+			drilled_pikers		= 8
+			unitorganization	= 16
+			offensive_terrain	=-1
+			frontal_charge		=-2
+			reserves		=-4
+			dismounted_knights	=-8
+			hierarkic_command	=-16
+		}
+		zero = 0
+		step = 1.6
+	}
+
+#	Quality-Quantity is determined by comparing noble power (Quality) to burgher and peasant power
+#		(Quantity)
+	quality_quantity = {
+		power = {
+			burghers	= 0.35
+			peasants	= 0.65
+			nobles		=-1.0
+		}
+		zero = 0
+		step = 0.03
+	}
+}
+
+
+#---------------------------------------
+#rules for converting a province content
+#---------------------------------------
+province_conversion = {
+#	NOTE: very often, a province is built up on several counties.
+#	There are different ways to account for this; this is defined by the county_mapping value:
+#		=> strict_average: compute the average on the basis on county numbers.  All counties
+#			participate equally.
+#		=> income_average: compute the average on the basis of money.  The richest county is
+#			most influential.
+#	However, because religion relies on numbers of people rather than area controlled, religion will
+#		always be determined by income.
+	county_mapping = income_average
+
+#	Base tax is either "normal" (as EU3 province), or computed by adding the corresponding counties'
+#		BASE income, and applying the corresponding table value (which is set to scale the CK base
+#		tax of Europe over the corresponding EU3 map) If the first (0) field is <0, we use the
+#		default EU3 value.
+#	This assumes a CK map with 2701 base tax points and an EU3 map with 2191 base tax points in the
+#		corresponding European areas.
+#	The field value is a float.
+	base_tax = {
+		0	= 0.000
+		1	= 0.811
+		2	= 1.622
+		3	= 2.434
+		4	= 3.245
+		5	= 4.056
+		6	= 4.867
+		7	= 5.678
+		8	= 6.489
+		9	= 7.301
+		10	= 8.112
+		11	= 8.923
+		12	= 9.734
+		13	=10.545
+		14	=11.357
+		15	=12.168
+		16	=12.979
+		17	=13.790
+		18	=14.601
+		19	=15.412
+		20	=16.224 #this should be the maximum (Byzantion) for an unmodded CK game...unless you have a lot of rich counties combining.
+		21	=17.035
+		22	=17.846
+		23	=18.657
+		24	=19.468
+		25	=20.280
+		26	=21.091
+		27	=21.902
+		28	=22.713
+		29	=23.524
+		30	=24.335
+	}
+
+#	City size is computed on global counties total income, with modifiers depending on buildings;
+#		the distribution on income is a Chi2 with average pop_factor (i.e. one money of income is
+#		worth pop_factor people).
+#	The modifiers for the buildings are applied on the result.
+#	If the factor is 0, we use historical size and no building effects
+	pop_factor = 2000
+	
+#	Manpower is computed on the basis of the province population, according to the following table;
+#		in addition, buildings may influence the manpower.
+#	If the first (0) field is <0, we use historical manpower with no building modifications.
+	manpower = {
+		0	=-1.0
+		1000	= 0.5
+		2000	= 1.0
+		4000	= 1.5
+		8000	= 2.0
+		13000	= 2.5
+		19000	= 3.0
+		26000	= 3.5
+		34000	= 4.0
+		53000	= 4.5
+		630000	= 5.0
+		740000	= 5.5
+		860000	= 6.0
+		990000	= 6.5
+	}
+
+#	The buildings may affect many things in the province layout
+#		The pop (integer) is used to compute the population of the province
+#		The manpower (float) is used to compute the global province manpower
+#		The tax (float) is used to modify the base tax of the province
+	ck_buildings = {
+		fishing_wharf		= { pop=60 }
+		civilian_harbour	= { pop=100 }
+		naval_harbour		= { pop=160 }
+		grand_shipyard		= { pop=200 }
+		sawmill			= { pop=80 }
+		forestry		= { pop=40 }
+		mine			= { pop=20 }
+		improved_mine		= { pop=40 }
+		watermills		= { pop=20 }
+		armory			= { pop=200 }
+		cheese_dairy		= { pop=80 }
+		dyeworks		= { pop=40 }
+		glassworks		= { pop=40 }
+		smithy			= { pop=40 }
+		brewery			= { pop=60 }
+		windmills		= { pop=100 }
+		spinningmill		= { pop=100 }
+		tilefactory		= { pop=40 }
+		roadnet			= { pop=80 }
+		extensive_roadnet	= { pop=160 }
+		moneylenders		= { pop=80 }
+		royal_post		= { pop=100 }
+		court_of_justice	= { pop=200 }
+		school			= { pop=100 }
+		library			= { pop=100 }
+		university		= { pop=400 }
+		theater			= { pop=300 }
+		traininggrounds		= { pop=40 manpower=0.5 }
+		waracademy		= { pop=100 manpower=0.5 }
+		hill_fort		= { pop=200 }
+		small_castle		= { pop=400 }
+		medium_castle		= { pop=800 manpower=0.5 }
+		large_castle		= { pop=1200 manpower=0.5 }
+		huge_castle		= { pop=2000 manpower=1 }
+		grand_palace		= { pop=800 }
+		templar_house		= { pop=100 }
+		monastery		= { pop=100 }
+		church			= { pop=100 }
+		large_church		= { pop=400 }
+		domed_church		= { pop=200 }
+		cathedral		= { pop=800 }
+		thieves_guild		= { pop=-200 }
+		smugglers_ring		= { pop=-500 }
+		highway_robber_band	= { pop=-1000 }
+	}
+
+#	This indicates the list of requirements for an EU3 building to qualify.
+#	The requirement value is the minimal average coverage of the province, as defined previously by
+#		county_mapping. It is interesting to note that:
+#			requirement=1 means exists in at least one county
+#			requirement=100 means is present in all counties
+#	Requirements can be advances or building; you have to prefix the name with the type of
+#		requirement
+
+#	RUC - don't add anything here, the non-fort ones will be done automatically
+	improvements = {
+		fort1 = { B_large_castle=1 B_medium_castle=60 }
+		fort2 = { B_huge_castle=70 }
+	}
+}
+
+
+#-------------------------------------------------
+#rules for making a country when it is a CK vassal
+#-------------------------------------------------
+#	For most fields, you will put on the right a structure the four possible choices (you don't have
+#			to fill up all of these; all are optional):
+#		mod: (see final effect structure) a number between -1000 and 1000
+#			A positive number increases the distance from the liege 
+#			A negative number decreases the distance from the liege
+#		best, worst:
+#			merged, union, vassal, ally, marriage, rNNN (relationship value, 0 to 200)
+#			For best, this state will be the best possible relationship
+#			For worst, the worst possible; of course, you must have best>=worst
+#			Use these sparingly: the result of large conflicts is not easy to guess.
+#			If more than one of these conditions is met, see below. We will try to meet the
+#				lowest best and highest worst.
+#			NOTE: as of now, rNNN have NO effect 
+#		prio: a number between -100 and 100
+#			A number used to resolve conflicts between conflicting conditions for best/worst;
+#			in short, a priority marker for selecting between conflicting situations.
+#			In details: at the end of the analysis, you get a series of
+#				worst (p1) worst (p2)... worst (pn) (decreasing order of p)
+#				best  (p1) best  (p2)... best  (pn) (decreasing order of p)
+#				if min(best) >= max(worst) there is no conflict.
+#				Otherwise, we remove the best=min(best) or worst=max(worst) with the lowest
+#				priority and iterate until there is no conflict.
+#		tier:
+#			county or duchy: you may differentiate rules for both tiers.
+#			The rule applies when converting countries from that tier.
+#			If not present, the rule applies to both tiers equally.
+#
+#	For example, weak_crown { GERM = { mod = 3 best = vassal worst = ally } }
+#		would indicate that all german duchies would end up as either vassals or allies of their
+#		lord (GERM), depending on the other conditions: they would never merge.
+#	Also note that mod tables do have an inherent order assumed, and that breaking that basic
+#		supposition may yield strange results. For exemple, it is assumed that the more loyal a
+#		vassal is, the more he is likely to stick with his liege. If you put values that do not
+#		follow this order, then things become unpredictable.
+
+country_convert_rules = {
+#	accepted culture:
+#		For the purpose of determining counties which are "close" or "far" from their liege.
+#		- liege if the ruler culture is accepted
+#		- capital if the capital culture is accepted
+#		- major_by_income if the dominant culture weighted with the province income is accepted
+#		- major_by_province if the dominant culture by counting provinces is accepted
+	accepted_cultures = { ruler capital major_by_income }
+
+#	liege country modifier
+#		Historically, some crowns were bad at keeping their vassals in their folds while others
+#		were good.
+	weak_crown = {
+		GERM = { mod=1 best=vassal worst=r150 tier=duchy }
+		ITAL = { mod=1 best=vassal worst=r100 tier=duchy }
+	}
+
+#	individual country modifier
+#		This allows individual settings for tags.
+#		It works as for weak_crown, but for specific countries; the result only applies to that
+#			country in relation to its lord.
+#		With this, you can decide that one specific country will have a greater chance to exist,
+#			or even force it to be independent.
+#		In the base version of the converter, this is not used; but you can use it for specific
+#			needs.
+	country_modifier = {  
+		#C082 = { mod=2 best=vassal worst=r150 }
+	}
+
+#	The liege's piety, prestige or gold may influence the way his vassals see him ; in the reverse,
+#		a vassal with too much gold/prestige or too low piety may think himself greater than he
+#		should be.
+#	This is taken into account by a complex rule:
+#		L is the liege value, V the vassal's one:
+#			* If L<0, then the minimal entry in the table is used
+#			* If V<0, then the maximal entry in the table is used
+#			* If both conditions apply, then both results are used
+#			* if L*L+V*V <= radius*radius, then the result is 0
+#				(too low values for both aren't significant)
+#			* Otherwise, we check V/L as a percentage in the table
+	prestige_radius = 200
+	prestige = {
+		100	= { mod= 1 }	#vassal prestige > liege prestige
+		20	= { mod= 0 }
+		0	= { mod=-1 }	#liege has at least 5*vassal prestige
+	}
+	gold_radius = 2000
+	gold = {
+		200	= { mod= 1 }	#vassal gold > 2*liege gold
+		5	= { mod= 0 }
+		0	= { mod=-1 }	#liege has at least 20*vassal gold
+	}
+#	For piety, it's a bit simpler because vassal would not try to
+#		compare his score to his liege's score.
+	liege_piety = {
+		5000	= { mod=-1 }	#high piety: vassals tend to stick. RUC: increased to 5000 from 1500
+		100	= { mod=0 }		#medium piety: no effect
+		-9999	= { mod=1 }		#poor piety: vassal tend to distance themselves
+	}
+
+	vassal_piety = {
+		500	= { mod=-1 }	#high piety: vassal tends to stick
+		-9999	= { mod=0 }		#poor piety: no effect
+	}
+
+#	The liege personality may have influence
+#	Possible fields are:
+#		trait = value => to indicate positive/negative modifiers for the given trait
+	liege_traits = {
+		realm_duress = { mod=1 }
+	}
+
+#	The kind of crown may have influence
+#		The fields are simple here! beware!
+	tier = {
+		#the normal ones are below (RUC)
+		county=-2	# slightly less than Yves' normal
+		duchy=0
+		kingdom=2	#rare but can happen (jerusalem)
+
+		#special massive-blobification results below.
+		#county=-10
+		#duchy=-10
+		#kingdom=-10	 #rare but can happen (jerusalem)
+	}
+
+#	Vassal crowns: if the vassal has crowns on which the liege has no claim
+#		only one level of crown is counted (i.e. this has no effects for county crowns when
+#		comparing to a king!)
+#	number of crowns = modifier (not cumulative)
+	own_crowns = {
+		#1 = { mod=1 }
+		#2 = { mod=1 best=vassal  }
+		#3 = { mod=2 best=vassal  }
+	}
+
+#	Liege doesn't hold the appropriate crown over the vassal's capital county
+	liege_crowns = {
+		not_king = { mod=2 }	#applies only if liege is king level
+		not_duke = { mod=2 tier=county }
+	}
+
+#	Loyalty modifier
+#	Possible fields are:
+#		numbers from 0 to 100 in decreasing order: effect if the ruler loyalty is below (<=) the #		number (not cumulative)
+	loyalty = {
+		60 = { mod=1 }
+		30 = { mod=2 }
+		10 = { mod=3 }
+	}
+
+#	Rule specific to counties vassal to a duchy whose duke has decided to merge
+	merged_liege = { mod=-2 tier=county }
+
+#	The vassal personality may have influence
+#	Possible fields are:
+#		trait = value	=> to indicate positive/negative modifiers for the given trait
+	traits = {
+		rebellious	= { mod= 1 }
+		loyalist	= { mod=-1 }
+		just		= { mod=-1 }
+	}
+
+#	Different culture may have influence; to the difference of other indicators, culture is hard to
+#		guess, because as long as the final country is unknown, it's precise culture is unknown
+#		too. So the culture thing must be seen as a best guess as regards any number based on the
+#		"majority".
+#	Possible fields are:
+#		ruler: effect if the ruler culture is not accepted
+#		capital: effect if the capital culture is not accepted
+#		numbers from 0 to 100 in increasing order: effect if that percentage of the duchy culture
+#				(>=) is not accepted (not cumulative)
+#			This percentage is computed depending on the accepted_cultures setting; if both
+#			major_by_income and major_by_province are set, the modifier will be computed on the
+#			base of the average of both ratios.
+	culture = {
+		ruler		= { mod=1 }
+		capital		= { mod=1 tier=duchy }
+		50		= { mod=1 }
+		80		= { mod=2 }
+	}
+
+#	Global size (including own CK vassals if any -before conversion-) may have influence.
+#	Possible fields are:
+#		numbers, in increasing order: effect if the size is that many counties or more (>=)
+#			(not cumulative).
+	size = {
+		0	= { mod=0 }		#hum... what does a duke with no demesne think ???
+		1	= { mod=-1 }	#a small demesne is less likely to become independent
+		2	= { mod=0 }
+		4	= { mod=1 }
+		7	= { mod=2 }
+		10	= { mod=3 }
+	}
+
+#	After adding the modifiers together, check the results.
+#	The constraints gained previously may modify that result.
+	effect = {
+		3	= union	#country becomes personal union
+		5	= vassal	#country becomes vassal
+		8	= ally	#country becomes ally
+		11	= marry	#country becomes married
+		15	= r150	#country becomes friend (100 relationship)
+	}
+}
+
+
+#-------------------------
+#province assignment rules
+#-------------------------
+province_assignement_rules = {
+#	How is weight calculated:
+#		money (use money to weight the counties)
+#		unity (1 per county) 
+#		capitalWeight will later mean either capital income or 1
+#		countryWeight will later mean either country income or number of counties
+	weight = money
+
+#	Modifiers
+#	Possible fields are:
+#		kingdom_capital (modifier for a county which is a kingdom capital)
+#		duchy_capital   (modifier for a county which is a duchy capital)
+#		county_capital  (modifier for a county which is a county-tier country capital)
+#		the value in each case is a structure which can take three fields, which are float values:
+#			the resulting formula for the weight of the capital is then:
+#			capitalWeight*mult + add + countryWeight*weight
+	modifier = {
+		kingdom_capital	= { add=2 mult=3 }
+		duchy_capital	= { add=3 mult=2 }
+		county_capital	= { add=3 weight=1.5 }
+	}
+
+#	Additional modifiers granted by specific improvements (also applied on capitals!)
+#	Fields are :
+#		improvement_name = modifier
+#		other = modifier (to grant all other improvements a uniform modifier)
+	improvements = {
+		huge_castle	= 4
+		large_castle	= 2
+		cathedral	= 1
+		other		= 0.3
+	}
+}
+
+
+#--------------------------
+#special jewish CK to EU3 mapping
+#--------------------------
+religions = {
+	jewish = { muslim = sunni }
+	pagan  = { pagan = shamanism }
+}
+
+
+#--------------------------
+#culture CK to EU3 mapping
+#--------------------------
+#fields are:
+#	CK_culture_name = { EU3_culture_group = EU3_culture_equivalent } if an exact equivalent exists
+#	CK_culture_name = { default = { EU3_culture_group = EU3_culture_equivalent } } when translation is required
+cultures = {
+	HttT = {
+		use = { type = stand_alone }
+		convert = {
+	abghazian	= { default = { byzantine = georgian } }
+	alan		= { altaic = azerbadjani }
+	armenian	= { byzantine = armenian }
+	basque		= { basque = basque }
+	bohemian	= { west_slavic = czech }
+	byzantine	= { default = { byzantine = greek } }
+	castillan	= { iberian = castillian }
+	catalan		= { iberian = catalan }
+	celtic		= { default = { gaelic = breton } }
+	cuman		= { altaic = uralic  }
+	danish		= { scandinavian = danish }
+	dutch		= { germanic = dutch }
+	easternslavic	= { default = { east_slavic = ruthenian } }
+	english		= { british = english }
+	finnish		= { finno_ugric = finnish }
+	frankish	= { default = { french = cosmopolitan_french } }
+	georgian	= { byzantine = georgian }
+	german		= { default = { germanic = bavarian } }
+	greek		= { byzantine = greek }
+	hospitalier	= { french = cosmopolitan_french }
+	hungarian	= { west_slavic = hungarian }
+	iberian		= { default = { iberian = galician } }
+	irish		= { gaelic = irish }
+	italian		= { default = { latin = lombard } }
+	lappish		= { default = { finno_ugric = sapmi } }
+	latin		= { default = { french = occitain } }
+	lettigallish	= { baltic = latvian }
+	lithuanian	= { baltic = lithuanian }
+	mongol		= { altaic = mongol }
+	muslim		= { default = { turko_semitic = maghreb_arabic } }
+	none		= { french = cosmopolitan_french }
+	norman		= { french = normand }
+	norse		= { scandinavian = norwegian }
+	norwegian	= { scandinavian = norwegian }
+	pecheneg	= { west_slavic = hungarian }
+	persian		= { iranian = persian }
+	polish		= { west_slavic = polish }
+	portuguese	= { iberian = portugese }
+	prussian	= { germanic = prussian }
+	russian		= { east_slavic = russian }
+	saxon		= { british = english}
+	scottish	= { british = scottish }
+	southslavic	= { default = { south_slavic = serbian } }
+	swedish		= { scandinavian = swedish }
+	templar		= { iberian = maltese }
+	teutonic	= { baltic = old_prussian }
+	turkish		= { turko_semetic = turkish }
+	ugricbaltic	= { default = { finno_ugric = estonian } }
+	welsh		= { gaelic = welsh }
+	westernslavic	= { default = { west_slavic = hungarian } }
+		}
+	}
+}
+
+
+#--------------------------
+#province CK to EU3 mapping
+#--------------------------
+#entry is :
+# This section defines how to convert from CK tags to EU3 tags
+# It contains one or more subsection, one for each possible set of conversion
+# The name for a given set must be also defined in the "selection" section below or it won't be seen.
+# Each subsection contains a number of mandatory and ioptional fields:
+#   use =    mandatory, contains two subfields:
+#         type = stand_alone or differential
+#         base = name : in case the modification is slight, use the base definition and apply the differences
+#                       defined in this section ; you can refer to another differential section, but should
+#                       end up falling back on a stand_alone section.
+#   convert =  optional, contains a list of simple subfields in the form:
+# 		EU3_province_id = {
+#     			ck = { ck_province_ids }
+#     			prefered = { list_of_EU3_canditate_countries_for_that_province }
+#     			other fields not used/parsed
+# 		}
+province = {
+	HttT = {
+        use = { type=stand_alone }
+	    convert = {
+		    370 = {
+		        ck = {1 }
+		        } 
+		    371 = {
+		        ck = {2 }
+		        } 
+		    372 = {
+		        ck = {5 4 3 }
+		        prefered = {tyr }
+		        culture=irish 
+		        name=tyrone 
+		        } 
+		    376 = {
+		        ck = {9 8 7 }
+		        prefered = {cnn }
+		        culture=irish 
+		        name=connacht 
+		        } 
+		    373 = {
+		        ck = {11 10 }
+		        prefered = {IRE }
+		        culture=irish 
+		        name=Ireland 
+		        } 
+		    374 = {
+		        ck = {16 12 }
+		        prefered = {lei }
+		        culture=irish 
+		        name=leinster 
+		        } 
+		    375 = {
+		        ck = {15 14 13 }
+		        prefered = {mns }
+		        culture=irish 
+		        name=munster 
+		        } 
+		    240 = {
+		        ck = {67 66 17 }
+		        } 
+		    241 = {
+		        ck = {20 19 18 }
+		        } 
+		    239 = {
+		        ck = {32 21 }
+		        } 
+		    237 = {
+		        ck = {69 68 22 }
+		        } 
+		    234 = {
+		        ck = {27 26 23 }
+		        } 
+		    236 = {
+		        ck = {72 24 }
+		        prefered = {eng gbr}
+		        culture=english 
+		        name=england 
+		        } 
+		    235 = {
+		        ck = {73 25 }
+		        } 
+		    233 = {
+		        ck = {31 30 29 28 }
+		        prefered = {CRN }
+		        culture=english 
+		        name=Cornwall 
+		        } 
+		    253 = {
+		        ck = {33 35 }
+		        } 
+		    369 = {
+		        ck = {34 36 }
+		        } 
+		    252 = {
+		        ck = {45 40 39 38 37 }
+		        } 
+		    251 = {
+		        ck = {43 42 41 }
+		        } 
+		    250 = {
+		        ck = {47 46 44 }
+		        } 
+		    248 = {
+		        ck = {51 48 }
+		        prefered = {sco }
+		        culture=lowland_scottish 
+		        name=scotland 
+		        } 
+		    249 = {
+		        ck = {50 49 }
+		        } 
+		    246 = {
+		        ck = {52 }
+		        prefered = {NOL }
+		        culture=english 
+		        name=Northumberland 
+		        } 
+		    247 = {
+		        ck = {54 53 }
+		        } 
+		    244 = {
+		        ck = {59 58 55 }
+		        prefered = {LAN }
+		        culture=english 
+		        name=Lancaster 
+		        } 
+		    245 = {
+		        ck = {57 56 }
+		        prefered = {yor }
+		        culture=english 
+		        name=york 
+		        } 
+		    242 = {
+		        ck = {65 64 60 }
+		        prefered = {WLS }
+		        culture=welsh 
+		        name=Wales 
+		        } 
+		    243 = {
+		        ck = {63 62 61 }
+		        } 
+		    238 = {
+		        ck = {71 70 }
+		        } 
+		    87 = {
+		        ck = {74 }
+		        } 
+		    89 = {
+		        ck = {75 }
+		        } 
+		    1743 = {
+		        ck = {95 }			
+		        } 
+		    88 = {
+		        ck = {77 }
+		        } 
+		    92 = {
+		        ck = {117 }
+		        prefered = {FLA }
+		        culture=flemish 
+		        name=Flanders 
+		        } 		
+		    90 = {
+		        ck = {76 93 }
+		        } 		
+		    1744 = {
+		        ck = {78 }
+		        } 
+		    96 = {
+		        ck = {79 }
+		        } 
+		    97 = {
+		        ck = {81 80 }
+		        prefered = {hol }
+		        culture=dutch 
+		        name=holland 
+		        prefered = {ned }
+		        culture=dutch 
+		        name=netherlands 
+		        } 
+		    98 = {
+		        ck = {82 }
+		        prefered = {utr }
+		        culture=dutch 
+		        name=utrecht 
+		        } 
+		    99 = {
+		        ck = {83 }
+		        prefered = {gel }
+		        culture=dutch 
+		        name=gelre 
+		        } 
+		    100 = {
+		        ck = {84 }
+		        prefered = {FRI }
+		        culture=dutch 
+		        name=Friesland 
+		        } 
+		    56 = {
+		        ck = {87 85 }
+		        } 
+		    55 = {
+		        ck = {88 }
+		        prefered = {old }
+		        culture=hannoverian 
+		        name=oldenburg 
+		        } 
+		    86 = {
+		        ck = {89 }
+		        prefered = {MUN }
+		        culture=hannoverian 
+		        name=Munster 
+		        } 
+		    84 = {
+		        ck = {119 }
+		        prefered = {kle }
+		        culture=rheinlaender 
+		        name=kleves 
+		        } 
+		    93 = {
+		        ck = {116 }
+		        prefered = {LIE }
+		        culture=wallonian 
+		        name=Liege 
+		        } 
+		    1742 = {
+		        ck = {90 91 }
+		        } 
+		    95 = {
+		        ck = {92 }
+		        prefered = {BRB }
+		        culture=dutch 
+		        name=Brabant 
+		        } 
+		    91 = {
+		        ck = {94 }
+		        prefered = {HAI }
+		        culture=wallonian 
+		        name=Hainaut 
+		        } 
+		    181 = {
+		        ck = {94 }
+		        } 
+		    167 = {
+		        ck = {98 97 96 }
+		        } 
+		    168 = {
+		        ck = {100 99 }
+		        prefered = {nrm }
+		        culture=normand 
+		        name=normandy 
+		        } 
+		    169 = {
+		        ck = {102 101 }
+		        } 
+		    170 = {
+		        ck = {104 103 }
+		        } 
+		    171 = {
+		        ck = {106 105 }
+		        } 
+		    178 = {
+		        ck = {107 }
+		        } 
+		    177 = {
+		        ck = {108 }
+		        } 
+		    179 = {
+		        ck = {140 109 }
+		        } 
+		    184 = {
+		        ck = {138 111 110 }
+		        prefered = {orl }
+		        culture=cosmopolitan_french 
+		        name=orleans 
+		        } 
+		    183 = {
+		        ck = {112 }
+		        prefered = {fra }
+		        culture=cosmopolitan_french 
+		        name=france 
+		        } 
+		    182 = {
+		        ck = {113 }
+		        } 
+		    186 = {
+		        ck = {130 114 }
+		        prefered = {chp }
+		        culture=cosmopolitan_french 
+		        name=champagne 
+		        } 
+		    80 = {
+		        ck = {115 }
+		        prefered = {TRI }
+		        culture=hessian 
+		        name=Trier 
+		        } 
+		    94 = {
+		        ck = {115 }
+		        prefered = {LUX }
+		        culture=wallonian 
+		        name=Luxembourgh 
+		        } 
+		    85 = {
+		        ck = {118 }
+		        prefered = {KOL }
+		        culture=rheinlaender 
+		        name=Cologne 
+		        } 
+		    1760 = {
+		        ck = {118 }
+		        } 
+		    83 = {
+		        ck = {119 }
+		        } 
+		    82 = {
+		        ck = {120 }
+		        } 
+		    81 = {
+		        ck = {121 }
+		        prefered = {HES }
+		        culture=hessian 
+		        name=Hessen 
+		        } 
+		    1762 = {
+		        ck = {121 }
+		        }		         		       
+		    74 = {
+		        ck = {125 122 }
+		        prefered = {bad }
+		        culture=rheinlaender 
+		        name=baden 
+		        } 
+		    78 = {
+		        ck = {123 }
+		        prefered = {MAI }
+		        culture=rheinlaender 
+		        name=Mainz 
+		        } 
+		    77 = {
+		        ck = {124 }
+		        prefered = {pal }
+		        culture=rheinlaender 
+		        name=palatinat 
+		        } 
+		    1761 = {
+		        ck = {124 }
+		        } 
+		    75 = {
+		        ck = {126 }
+		        prefered = {als }
+		        culture=rheinlaender 
+		        name=alsace 
+		        } 
+		    189 = {
+		        ck = {134 133 127 }
+		        prefered = {lor }
+		        culture=burgundian 
+		        name=lorraine 
+		        } 
+		    188 = {
+		        ck = {128 }
+		        } 
+		    187 = {
+		        ck = {129 }
+		        } 
+		    185 = {
+		        ck = {131 }
+		        } 
+		    192 = {
+		        ck = {226 136 132 }
+		        prefered = {bur }
+		        culture=burgundian 
+		        name=burgundy 
+		        } 
+		    193 = {
+		        ck = {240 135 }
+		        } 
+		    191 = {
+		        ck = {225 137 }
+		        prefered = {nev }
+		        culture=burgundian 
+		        name=nevers 
+		        } 
+		    190 = {
+		        ck = {146 139 }
+		        prefered = {bou }
+		        culture=occitain 
+		        name=bourbonnais 
+		        } 
+		    180 = {
+		        ck = {144 141 }
+		        } 
+		    172 = {
+		        ck = {142 }
+		        prefered = {bri }
+		        culture=breton 
+		        name=brittany 
+		        } 
+		    173 = {
+		        ck = {143 }
+		        } 
+		    195 = {
+		        ck = {147 145 }
+		        } 
+		    174 = {
+		        ck = {149 148 }
+		        } 
+		    175 = {
+		        ck = {209 151 150 }
+		        prefered = {amg }
+		        culture=gascon 
+		        name=armangnac 
+		        } 
+		    210 = {
+		        ck = {152 }
+		        prefered = {nav }
+		        culture=basque 
+		        name=navarra 
+		        } 
+		    209 = {
+		        ck = {153 }
+		        } 
+		    1745 = {
+		        ck = {154 }
+		        } 
+		    207 = {
+		        ck = {155 }
+		        } 
+		    206 = {
+		        ck = {157 156 }
+		        } 
+		    231 = {
+		        ck = {158 }
+		        } 
+		    227 = {
+		        ck = {160 159 }
+		        prefered = {por }
+		        culture=portugese 
+		        name=portugal 
+		        } 
+		    229 = {
+		        ck = {185 161 }
+		        } 
+		    230 = {
+		        ck = {163 162 }
+		        } 
+		    226 = {
+		        ck = {166 }
+		        } 
+		    223 = {
+		        ck = {167 }
+		        prefered = {gra }
+		        culture=berber 
+		        name=granada 
+		        } 
+		    222 = {
+		        ck = {168 }
+		        } 
+		    1748 = {
+		        ck = {181 180 }
+		        } 
+		    221 = {
+		        ck = {169 179 }
+		        } 
+		    1750 = {
+		        ck = {170 }
+		        } 
+		    219 = {
+		        ck = {196 178 }
+		        prefered = {spa }
+		        culture=castillian 
+		        name=spain 
+		        } 
+		    220 = {
+		        ck = {173 172 171 }
+		        } 
+		    214 = {
+		        ck = {202 175 174 }
+		        } 
+		    217 = {
+		        ck = {197 177 176 }
+		        } 
+		    228 = {
+		        ck = {187 186 }
+		        } 
+		    232 = {
+		        ck = {188 }
+		        } 
+		    208 = {
+		        ck = {190 189 }
+		        } 
+		    216 = {
+		        ck = {192 191 }
+		        } 
+		    218 = {
+		        ck = {195 184 }
+		        } 
+		    1747 = {
+		        ck = {194 193 }
+		        }
+		    224 = {
+		        ck = {164 }
+		        } 
+		    1749 = {
+		        ck = {165 }
+		        } 
+		    225 = {
+		        ck = {183 182 }
+		        } 
+		    215 = {
+		        ck = {200 198 }
+		        prefered = {cas }
+		        culture=castillian 
+		        name=castile 
+		        } 
+		    1746 = {
+		        ck = {201 199 }
+		        } 
+		    213 = {
+		        ck = {204 203 }
+		        prefered = {ARA }
+		        culture=catalan 
+		        name=Aragon 
+		        prefered = {cat }
+		        culture=catalan 
+		        name=catalunya 
+		        } 
+		    212 = {
+		        ck = {206 205 }
+		        } 
+		    211 = {
+		        ck = {207 }
+		        } 
+		    176 = {
+		        ck = {210 208 }
+		        prefered = {foi }
+		        culture=gascon 
+		        name=foix 
+		        } 
+		    197 = {
+		        ck = {211 }
+		        } 
+		    200 = {
+		        ck = {220 213 212 }
+		        } 
+		    196 = {
+		        ck = {215 214 }
+		        prefered = {tou }
+		        culture=aquitaine 
+		        name=toulouse 
+		        } 
+		    194 = {
+		        ck = {216 }
+		        prefered = {GUY }
+		        culture=aquitaine 
+		        name=Guyenne 
+		        } 
+		    199 = {
+		        ck = {223 219 217 }
+		        prefered = {AUV }
+		        culture=occitain 
+		        name=Auvergne 
+		        } 
+		    198 = {
+		        ck = {218 }
+		        } 
+		    201 = {
+		        ck = {229 221 }
+		        prefered = {PRO }
+		        culture=occitain 
+		        name=Provence 
+		        } 
+		    202 = {
+		        ck = {222 }
+		        prefered = {avi }
+		        culture=occitain 
+		        name=avignon 
+		        } 
+		    203 = {
+		        ck = {227 224 }
+		        } 
+		    204 = {
+		        ck = {228 }
+		        prefered = {dau }
+		        culture=occitain 
+		        name=dauphine  
+		        } 
+		    102 = {
+		        ck = {230 }
+		        } 
+		    103 = {
+		        ck = {236 232 231 }
+		        prefered = {sav }
+		        culture=lombard 
+		        name=savoy 
+		        } 
+		    101 = {
+		        ck = {233 }
+		        prefered = {gen }
+		        culture=lombard 
+		        name=genoa 
+		        } 
+		    104 = {
+		        ck = {320 246 235 234 }
+		        prefered = {mlo }
+		        culture=lombard 
+		        name=milan 
+		        } 
+		    205 = {
+		        ck = {237 }
+		        } 
+		    165 = {
+		        ck = {244 242 241 239 238 }
+		        prefered = {swi }
+		        culture=rheinlaender 
+		        name=switzerland 
+		        } 
+		    166 = {
+		        ck = {248 247 245 }
+		        } 
+		    69 = {
+		        ck = {252 249 }
+		        } 
+		    72 = {
+		        ck = {250 }
+		        } 
+		    70 = {
+		        ck = {251 }
+		        prefered = {wur }
+		        culture=bavarian 
+		        name=wurttemberg 
+		        } 
+		    71 = {
+		        ck = {254 253}
+		        } 
+		    79 = {
+		        ck = {255 }
+		        prefered = {wbg }
+		        culture=bavarian 
+		        name=wurzburg 
+		        } 
+		    63 = {
+		        ck = {256 }
+		        } 
+		    57 = {
+		        ck = {257 }
+		        prefered = {HAN }
+		        culture=hannoverian 
+		        name=Hannover 
+		        } 
+		    53 = {
+		        ck = {258 }
+		        prefered = {bru }
+		        culture=hannoverian 
+		        name=brunswick 
+		        prefered = {LUN }
+		        culture=hannoverian 
+		        name=Luneburg 
+		        } 
+		    1758 = {
+		        ck = {259 }
+				}		        
+		    54 = {
+		        ck = {995 }
+		        prefered = {BRE }
+		        culture=hannoverian 
+		        name=Bremen 
+		        } 
+		    46 = {
+		        ck = {260 }
+		        } 
+		    44 = {
+		        ck = {261 }
+		        prefered = {ham }
+		        culture=hannoverian 
+		        name=hamburg 
+		        } 
+		    45 = {
+		        ck = {262 }
+		        prefered = {MKL }
+		        culture=pommeranian 
+		        name=Mecklenburg 
+		        } 
+		    13 = {
+		        ck = {264 263 }
+		        prefered = {shl }
+		        culture=hannoverian 
+		        name=holstein 
+		        } 
+		    14 = {
+		        ck = {265 }
+		        } 
+		    12 = {
+		        ck = {266 }
+		        prefered = {dan }
+		        culture=danish 
+		        name=denmark 
+		        } 
+		    15 = {
+		        ck = {267 }
+		        } 
+		    24 = {
+		        ck = {270 268 }
+		        } 
+		    23 = {
+		        ck = {274 269 }
+		        } 
+		    17 = {
+		        ck = {273 272 271 }
+		        prefered = {nor }
+		        culture=norwegian 
+		        name=norway 
+		        } 
+		    20 = {
+		        ck = {277 275 }
+		        } 
+		    22 = {
+		        ck = {276 }
+		        } 
+		    21 = {
+		        ck = {277 }
+		        } 
+		    315 = {
+		        ck = {278 }
+		        } 
+		    18 = {
+		        ck = {279 }
+		        } 
+		    11 = {
+		        ck = {283 281 280 }
+		        } 
+		    10 = {
+		        ck = {284 282 }
+		        } 
+		    9 = {
+		        ck = {286 285 }
+		        } 
+		    8 = {
+		        ck = {287 }
+		        } 
+		    5 = {
+		        ck = {295 294 288 }
+		        } 
+		    4 = {
+		        ck = {289 }
+		        } 
+		    1 = {
+		        ck = {292 291 290 }
+		        prefered = {swe }
+		        culture=swedish 
+		        name=sweden 
+		        } 
+		    2 = {
+		        ck = {293 }
+		        }
+		    3 = {
+		        ck = {300 299 298 6 }
+		        }  
+		    16 = {
+		        ck = {296 }
+		        } 
+		    7 = {
+		        ck = {297 }
+		        } 
+		    25 = {
+		        ck = {301 }
+		        prefered = {got }
+		        culture=swedish 
+		        name=gotland 
+		        } 
+		    26 = {
+		        ck = {302 }
+		        } 
+		    6 = {
+		        ck = {305 303 }
+		        } 
+		    47 = {
+		        ck = {308 307 306 304 }
+		        } 
+		    51 = {
+		        ck = {309 }
+		        } 
+		    52 = {
+		        ck = {309 }
+		        prefered = {mag }
+		        culture=saxon 
+		        name=magdeburg 
+		        } 
+		    58 = {
+		        ck = {310 }
+		        prefered = {anh }
+		        culture=saxon 
+		        name=anhalt 
+		        } 
+		    59 = {
+		        ck = {310 }
+		        prefered = {sax }
+		        culture=saxon 
+		        name=saxony 
+		        } 		        
+		    66 = {
+		        ck = {311 }
+		        } 
+		    61 = {
+		        ck = {312 }
+		        } 
+		    62 = {
+		        ck = {312 }
+		        }
+		    1757 = {
+		        ck = {314 }
+			}				         
+		    67 = {
+		        ck = {313 }
+		        } 
+		    68 = {
+		        ck = {315 }
+		        } 
+		    1768 = {
+		        ck = {359 }
+		        } 		        
+		    73 = {
+		        ck = {316 }
+		        prefered = {tir }
+		        culture=austrian 
+		        name=tyrol 
+		        } 
+		    110 = {
+		        ck = {317 }
+		        } 
+		    107 = {
+		        ck = {318 }
+		        } 
+		    108 = {
+		        ck = {319 }
+		        } 
+		    105 = {
+		        ck = {321 }
+		        prefered = {par }
+		        culture=lombard 
+		        name=parma 
+		        } 
+		    106 = {
+		        ck = {323 322 }
+		        prefered = {mod }
+		        culture=lombard 
+		        name=modena 
+		        } 
+		    1247 = {
+		        ck = {324 }
+		        prefered = {COR }
+		        culture=lombard 
+		        name=Corsica 
+		        } 
+		    127 = {
+		        ck = {326 325 }
+		        prefered = {sar }
+		        culture=lombard 
+		        name=sardinia 
+		        } 
+		    115 = {
+		        ck = {331 327 }
+		        prefered = {pis }
+		        culture=lombard 
+		        name=pisa 
+		        } 
+		    116 = {
+		        ck = {328 }
+		        prefered = {tus }
+		        culture=lombard 
+		        name=tuscany 
+		        } 
+		    119 = {
+		        ck = {350 329 }
+		        prefered = {URB }
+		        culture=umbrian 
+		        name=Urbino 
+		        } 
+		    117 = {
+		        ck = {332 330 }
+		        prefered = {SIE }
+		        culture=lombard 
+		        name=Siena 
+		        } 
+		    118 = {
+		        ck = {898 333 }
+		        prefered = {ITA }
+		        culture=lombard 
+		        name=Italy 
+		        prefered = {PAP }
+		        culture=umbrian 
+		        name=PapalStates 
+		        } 
+		    121 = {
+		        ck = {997 336 335 334 }
+		        prefered = {sic }
+		        culture=sicilian 
+		        name=sicily 
+		        } 
+		    123 = {
+		        ck = {344 338 337 }
+		        } 
+		    124 = {
+		        ck = {343 339 }
+		        } 
+		    125 = {
+		        ck = {342 341 340 }
+		        } 
+		    122 = {
+		        ck = {347 346 345 }
+		        } 
+		    120 = {
+		        ck = {349 348 }
+		        } 
+		    114 = {
+		        ck = {351 }
+		        } 
+		    113 = {
+		        ck = {353 352 }
+		        prefered = {FER }
+		        culture=lombard 
+		        name=Ferrara 
+		        } 
+		    112 = {
+		        ck = {356 354 }
+		        prefered = {ven }
+		        culture=lombard 
+		        name=venice 
+		        } 
+		    109 = {
+		        ck = {355 }
+		        prefered = {man }
+		        culture=lombard 
+		        name=mantua 
+		        } 
+		    1774 = {
+		        ck = {357 }
+		        } 		        
+		    111 = {
+		        ck = {358 }
+		        } 
+		    65 = {
+		        ck = {360 }
+		        prefered = {BAV }
+		        culture=bavarian 
+		        name=Bavaria 
+		        } 
+		    64 = {
+		        ck = {361 }
+		        } 
+		    267 = {
+		        ck = {439 362 }
+		        } 
+		    1763 = {
+		        ck = {364 }
+		        } 
+		    1771 = {
+		        ck = {363 }	
+		   	}  
+		    266 = {
+		        ck = {437 }
+		        prefered = {BOH }
+		        culture=czech 
+		        name=Bohemia 
+		        } 
+		    60 = {
+		        ck = {436 }
+		        prefered = {THU }
+		        culture=saxon 
+		        name=Thuringia 
+		        } 
+		    50 = {
+		        ck = {365 }
+		        prefered = {BRA }
+		        culture=saxon 
+		        name=Brandenburg 
+		        prefered = {GER }
+		        culture=prussian 
+		        name=Germany 
+		        } 
+		    1759 = {
+		        ck = {365 }
+			}		        
+		    48 = {
+		        ck = {367 366 }
+		        prefered = {POM }
+		        culture=pommeranian 
+		        name=Pommern 
+		        } 
+		    43 = {
+		        ck = {368 }
+		        } 
+		    42 = {
+		        ck = {370 369 }
+		        } 
+		    41 = {
+		        ck = {427 422 371 }
+		        prefered = {pru }
+		        culture=prussian 
+		        name=prussia 
+		        prefered = {teu }
+		        culture=old_prussian 
+		        name=teutonic_order 
+		        } 
+		    40 = {
+		        ck = {372 }
+		        } 
+		    39 = {
+		        ck = {373 }
+		        prefered = {KUR }
+		        culture=old_prussian 
+		        name=Courland 
+		        } 
+		    271 = {
+		        ck = {421 374 }
+		        } 
+		    38 = {
+		        ck = {375 }
+		        prefered = {RIG }
+		        culture=prussian 
+		        name=Riga 
+		        } 
+		    35 = {
+		        ck = {376 }
+		        } 
+		    37 = {
+		        ck = {379 377 }
+		        } 
+		    36 = {
+		        ck = {380 378 }
+		        } 
+		    28 = {
+		        ck = {381 }
+		        } 
+		    27 = {
+		        ck = {384 382 }
+		        prefered = {FIN }
+		        culture=finnish 
+		        name=Finland 
+		        } 
+		    29 = {
+		        ck = {383 }
+		        } 
+		    19 = {
+		        ck = {389 386 385 }
+		        } 
+		    32 = {
+		        ck = {388 387 }
+		        } 
+		    31 = {
+		        ck = {390 }
+		        } 
+		    30 = {
+		        ck = {392 391 }
+		        } 
+		    309 = {
+		        ck = {394 393 }
+		        } 
+		    1755 = {
+		        ck = {399 398 397 }
+				}
+		    314 = {
+		        ck = {403 }	
+		        } 
+		    313 = {
+		        ck = {396 395 } 
+		        }
+		    1083 = {
+		        ck = {612 400 }
+		        } 
+		    1753 = {
+		        ck = {401 }
+		        }		        
+		    308 = {
+		        ck = {402 }
+		        prefered = {YAR }
+		        culture=russian 
+		        name=Yaroslavl 
+		        } 
+		    312 = {
+		        ck = {408 404 }
+		        } 
+		    1752 = {
+		        ck = {572 571 }
+		        } 
+		    1754 = {
+		        ck = {582 574 }
+		        } 
+		    294 = {
+		        ck = {407 406 405 }
+		        prefered = {tve }
+		        culture=russian 
+		        name=tver 
+		        } 
+		    310 = {
+		        ck = {410 409 }
+		        prefered = {nov }
+		        culture=russian 
+		        name=novgorod 
+		        } 
+		    33 = {
+		        ck = {411 }
+		        } 
+		    34 = {
+		        ck = {412 }
+		        } 
+		    274 = {
+		        ck = {413 }
+		        prefered = {psk }
+		        culture=russian 
+		        name=pskov 
+		        } 
+		    311 = {
+		        ck = {570 414 }
+		        } 
+		    273 = {
+		        ck = {416 }
+		        } 
+		    272 = {
+		        ck = {424 420 419 418 }
+		        prefered = {LIT }
+		        culture=lithuanian 
+		        name=Lithuania 
+		        } 
+		    270 = {
+		        ck = {423 }
+		        } 
+		    269 = {
+		        ck = {426 425 }
+		        } 
+		    256 = {
+		        ck = {428 }
+		        } 
+		    255 = {
+		        ck = {432 429 }
+		        } 
+		    49 = {
+		        ck = {430 }
+		        } 
+		    254 = {
+		        ck = {431 }
+		        } 
+		    258 = {
+		        ck = {528 433 }
+		        } 
+		    264 = {
+		        ck = {434 }
+		        prefered = {sil }
+		        culture=schlesian 
+		        name=silesia 
+		        } 
+		    263 = {
+		        ck = {435 }
+		        } 
+		    265 = {
+		        ck = {441 440 438 }
+		        } 
+		    1772 = {
+		        ck = {445 444 443 }	
+		        } 
+		    154 = {
+		        ck = {525 524 442 } 
+		        } 
+		    1770 = {
+		        ck = {446 }	
+		        } 
+		    134 = {
+		        ck = {449 }
+		        prefered = {HAB }
+		        culture=austrian 
+		        name=Austria 
+		        } 
+		    133 = {
+		        ck = {447 }
+		        } 
+		    76 = {
+		        ck = {448 }
+		        prefered = {SLZ }
+		        culture=austrian 
+		        name=Salzburg 
+		        } 
+		    135 = {
+		        ck = {454 450 }
+		        } 
+		    153 = {
+		        ck = {453 452 451 }
+		        } 
+		    132 = {
+		        ck = {455 }
+		        prefered = {STY }
+		        culture=austrian 
+		        name=Styria 
+		        } 
+		    1769 = {
+		        ck = {457 }	
+		        } 
+		    129 = {
+		        ck = {456 }	
+		        } 
+		    128 = {
+		        ck = {455 }	
+		        } 
+		    130 = {
+		        ck = {458 }
+		        } 
+		    1767 = {
+		        ck = {461 }
+		        } 		        
+		    131 = {
+		        ck = {464 459 }
+		        prefered = {CRO }
+		        culture=croatian 
+		        name=Croatia 
+		        } 
+		    152 = {
+		        ck = {462 460 }
+		        } 
+		    140 = {
+		        ck = {505 504 463 }
+		        prefered = {bos }
+		        culture=serbian 
+		        name=bosnia 
+		        } 
+		    136 = {
+		        ck = {467 466 465 }
+		        } 
+		    137 = {
+		        ck = {468 }
+		        prefered = {rag }
+		        culture=croatian 
+		        name=ragusa 
+		        } 
+		    138 = {
+		        ck = {469 }
+		        prefered = {MON }
+		        culture=serbian 
+		        name=Montenegro 
+		        } 
+		    143 = {
+		        ck = {471 470 }
+		        prefered = {alb }
+		        culture=albanian 
+		        name=albania 
+		        } 
+		    144 = {
+		        ck = {473 472 }
+		        } 
+		    142 = {
+		        ck = {474 }
+		        prefered = {CEP }
+		        culture=lombard 
+		        name=Corfu 
+		        } 
+		    146 = {
+		        ck = {488 482 475 }
+		        prefered = {ath }
+		        culture=lombard 
+		        name=athens 
+		        prefered = {GRE }
+		        culture=greek 
+		        name=Greece 
+		        } 
+		    1773 = {
+				ck = {481 476 }
+				}
+		    145 = {
+		        ck = {477 478 }	# removed 476 481
+		        prefered = {MOE }
+		        culture=greek 
+		        name=Morea 
+		        } 		        
+		    163 = {
+		        ck = {480 479 }
+		        prefered = {crt }
+		        culture=greek 
+		        name=crete 
+		        } 
+		    320 = {
+		        ck = {483 }
+		        } 
+		    164 = {
+		        ck = {485 484 }
+		        prefered = {NAX }
+		        culture=lombard 
+		        name=Naxos 
+		        } 
+		    318 = {
+		        ck = {746 745 486 }
+		        } 
+		    317 = {
+		        ck = {744 743 487 }
+		        } 
+		    147 = {
+		        ck = {491 490 489 }
+		        } 
+		    148 = {
+		        ck = {492 491 }		
+		        } 
+		    149 = {
+		        ck = {495 494 493 }
+		        } 
+		    151 = {
+		        ck = {496 }
+		        prefered = {tur }
+		        culture=turkish 
+		        name=ottoman 
+		        } 
+		    159 = {
+		        ck = {510 509  }
+		        } 
+		    1764 = {
+		        ck = {498 497 } 
+		        } 		        
+		    150 = {
+		        ck = {508 507 499 }
+		        prefered = {BUL }
+		        culture=bulgarian 
+		        name=Bulgaria 
+		        } 
+		    141 = {
+		        ck = {506 502 }	
+		        prefered = {ser }
+		        culture=serbian 
+		        name=serbia 
+		        } 		
+		    1766 = {
+		        ck = {501 } 
+		        } 
+		    1765 = {
+		        ck = {500 } 
+		        } 		                
+		    139 = {
+		        ck = {503 }
+		        } 
+		    268 = {
+		        ck = {545 541 }
+		        prefered = {mol }
+		        culture=romanian 
+		        name=moldavia 
+		        } 
+		    158 = {
+		        ck = {540 519 513 }
+		        prefered = {tra }
+		        culture=hungarian 
+		        name=transylvania 
+		        } 
+		    161 = {
+		        ck = {515 514 }
+		        prefered = {wal }
+		        culture=romanian 
+		        name=wallachia 
+		        } 
+		    160 = {
+		        ck = {516 }
+		        } 
+		    156 = {
+		        ck = {518 517 }
+		        } 
+		    157 = {
+		        ck = {523 520 }
+		        } 
+		    155 = {
+		        ck = {522 521 }
+		        prefered = {hun }
+		        culture=hungarian 
+		        name=hungary 
+		        } 
+		    262 = {
+		        ck = {532 526 }
+		        prefered = {pol }
+		        culture=polish 
+		        name=poland 
+		        } 
+		    259 = {
+		        ck = {527 }
+		        } 
+		    257 = {
+		        ck = {529 }
+		        prefered = {maz }
+		        culture=polish 
+		        name=mazovia 
+		        } 
+		    277 = {
+		        ck = {530 }
+		        } 
+		    260 = {
+		        ck = {535 534 531 }
+		        } 
+		    261 = {
+		        ck = {533 }
+		        } 
+		    279 = {
+		        ck = {536 }
+		        } 
+		    162 = {
+		        ck = {539 538 537 }
+		        } 
+ 		    1756 = {
+		        ck = {542 512 511 }
+			}		         
+		    282 = {
+		        ck = {543 }
+		        }
+		    283 = {
+		        ck = {556 }
+		        prefered = {zaz }
+		        culture=ukrainian 
+		        name=zaporozhie 
+		        } 
+		    281 = {
+		        ck = {546 544 }
+		        } 
+		    280 = {
+		        ck = {552 547 }
+		        prefered = {UKR }
+		        culture=ruthenian 
+		        name=Ukraine 
+		        } 
+		    278 = {
+		        ck = {549 548 }
+		        } 
+		    276 = {
+		        ck = {551 550 }
+		        } 
+		    289 = {
+		        ck = {554 553 }
+		        } 
+		    290 = {
+		        ck = {565 555 }
+		        } 
+		    286 = {
+		        ck = {596 563 557 }
+		        } 
+		    284 = {
+		        ck = {559 558 }
+		        prefered = {CRI }
+		        culture=tartar 
+		        name=Crimea 
+		        } 
+		    285 = {
+		        ck = {598 562 561 560 }
+		        } 
+		    291 = {
+		        ck = {594 566 564 }
+		        } 
+		    292 = {
+		        ck = {568 }
+		        } 
+		    293 = {
+		        ck = {569 }
+		        } 
+		    296 = {
+		        ck = {573 }
+		        } 
+		    297 = {
+		        ck = {578 575 }
+		        } 
+		    275 = {
+		        ck = {417 415 }
+		        } 
+		    298 = {
+		        ck = {577 576 567 }
+		        } 
+		    299 = {
+		        ck = {593 579 }
+		        } 
+		    300 = {
+		        ck = {581 580 }
+		        } 
+		    295 = {
+		        ck = {585 583 }
+		        prefered = {MOS }
+		        culture=russian 
+		        name=Muscowy 
+		        prefered = {rus }
+		        culture=russian 
+		        name=russia 
+		        } 
+		    301 = {
+		        ck = {590 588 584 }
+		        prefered = {qas }
+		        culture=russian 
+		        name=qasimkhanate 
+		        prefered = {RYA }
+		        culture=russian 
+		        name=Ryazan 
+		        } 
+		    307 = {
+		        ck = {589 587 586 }
+		        } 
+		    302 = {
+		        ck = {610 609 592 591 }
+		        } 
+		    288 = {
+		        ck = {607 595 }
+		        } 
+		    287 = {
+		        ck = {606 599 597 }
+		        } 
+		    462 = {
+		        ck = {602 601 600 }
+		        } 
+		    463 = {
+		        ck = {603 }
+		        } 
+		    464 = {
+		        ck = {620 604 }
+		        prefered = {ast }
+		        culture=tartar 
+		        name=astrakhan 
+		        } 
+		    466 = {
+		        ck = {605 }
+		        prefered = {gol }
+		        culture=tartar 
+		        name=golden_horde 
+		        } 
+		    467 = {
+		        ck = {617 608 }
+		        } 
+		    306 = {
+		        ck = {611 }
+		        } 
+		    304 = {
+		        ck = {613 }
+		        } 
+		    305 = {
+		        ck = {614 }
+		        } 
+		    303 = {
+		        ck = {615 }
+		        } 
+		    469 = {
+		        ck = {616 }
+		        } 
+		    474 = {
+		        ck = {616 }
+		        } 
+		    465 = {
+		        ck = {618 }
+		        } 
+		    468 = {
+		        ck = {619 }
+		        } 
+		    470 = {
+		        ck = {622 621 }
+		        prefered = {nog }
+		        culture=tartar 
+		        name=nogai 
+		        } 
+		    443 = {
+		        ck = {624 623 }
+		        } 
+		    439 = {
+		        ck = {625 }
+		        } 
+		    438 = {
+		        ck = {628 627 626 }
+		        } 
+		    437 = {
+		        ck = {631 630 629 }
+		        } 
+		    436 = {
+		        ck = {637 635 632 }
+		        } 
+		    427 = {
+		        ck = {633 }
+		        } 
+		    433 = {
+		        ck = {638 636 634 }
+		        } 
+		    432 = {
+		        ck = {640 639 }
+		        } 
+		    431 = {
+		        ck = {641 }
+		        } 
+		    430 = {
+		        ck = {642 }
+		        } 
+		    429 = {
+		        ck = {646 644 643 }
+		        } 
+		    412 = {
+		        ck = {648 647 645 }
+		        } 
+		    408 = {
+		        ck = {654 649 }
+		        } 
+		    394 = {
+		        ck = {652 651 650 }
+		        prefered = {alh }
+		        culture=bedouin_arabic 
+		        name=haasa 
+		        } 
+		    396 = {
+		        ck = {653 }
+		        } 
+		    409 = {
+		        ck = {691 690 655 }
+		        } 
+		    410 = {
+		        ck = {693 689 656 }
+		        } 
+		    413 = {
+		        ck = {688 657 }
+		        } 
+		    428 = {
+		        ck = {665 663 660 659 658 }
+		        } 
+		    426 = {
+		        ck = {662 661 }
+		        } 
+		    414 = {
+		        ck = {687 664 }
+		        prefered = {qar }
+		        culture=persian 
+		        name=qara_koyunlu 
+		        } 
+		    417 = {
+		        ck = {666 }
+		        } 
+		    416 = {
+		        ck = {670 667 }
+		        prefered = {per }
+		        culture=persian 
+		        name=persia 
+		        } 
+		    421 = {
+		        ck = {668 }
+		        } 
+		    424 = {
+		        ck = {669 }
+		        } 
+		    420 = {
+		        ck = {671 }
+		        } 
+		    419 = {
+		        ck = {682 672 }
+		        prefered = {ARM }
+		        culture=armenian 
+		        name=Armenia 
+		        } 
+		    425 = {
+		        ck = {675 674 673 }
+		        } 
+		    422 = {
+		        ck = {677 676 }
+		        } 
+		    330 = {
+		        ck = {705 678 }
+		        prefered = {tre }
+		        culture=greek 
+		        name=trebizond 
+		        } 
+		    423 = {
+		        ck = {679 }
+		        prefered = {geo }
+		        culture=georgian 
+		        name=georgia 
+		        } 
+		    331 = {
+		        ck = {706 704 681 680 }
+		        } 
+		    415 = {
+		        ck = {686 685 684 683 }
+		        } 
+		    406 = {
+		        ck = {723 715 714 713 694 692 }
+		        } 
+		    411 = {
+		        ck = {697 696 695 }
+		        } 
+		    407 = {
+		        ck = {729 712 711 710 709 708 700 698 }
+		        } 
+		    332 = {
+		        ck = {735 707 699 }
+		        } 
+		    418 = {
+		        ck = {703 702 701 }
+		        prefered = {akk }
+		        culture=persian 
+		        name=ak_koyunlu 
+		        } 
+		    405 = {
+		        ck = {722 717 716 }
+		        } 
+		    384 = {
+		        ck = {718 }
+		        } 
+		    385 = {
+		        ck = {719 }
+		        prefered = {hed }
+		        culture=bedouin_arabic 
+		        name=the_hedjaz 
+		        } 
+		    383 = {
+		        ck = {784 721 720 }
+		        } 
+		    382 = {
+		        ck = {730 728 727 726 725 724 }
+		        } 
+		    377 = {
+		        ck = {767 766 765 764 734 733 732 731 }
+		        } 
+		    327 = {
+		        ck = {763 762 761 736 }
+		        } 
+		    329 = {
+		        ck = {752 737 }
+		        prefered = {dul }
+		        culture=turkish 
+		        name=dulkadir 
+		        } 
+		    328 = {
+		        ck = {739 738 }
+		        } 
+		    325 = {
+		        ck = {750 740 }
+		        prefered = {cnd }
+		        culture=turkish 
+		        name=candar 
+		        } 
+		    316 = {
+		        ck = {742 741 }
+		        } 
+		    319 = {
+		        ck = {747 }
+		        } 
+		    322 = {
+		        ck = {749 748 }
+		        } 
+		    326 = {
+		        ck = {760 753 751 }
+		        } 
+		    323 = {
+		        ck = {759 754 }
+		        } 
+		    324 = {
+		        ck = {758 755 }
+		        prefered = {kar }
+		        culture=turkish 
+		        name=karaman 
+		        } 
+		    321 = {
+		        ck = {757 756 }
+		        prefered = {cyp }
+		        culture=cosmopolitan_french 
+		        name=cyprus 
+		        } 
+		    378 = {
+		        ck = {773 772 771 770 769 768 }
+		        } 
+		    379 = {
+		        ck = {781 780 775 774 }
+		        } 
+		    381 = {
+		        ck = {779 777 776 }
+		        } 
+		    380 = {
+		        ck = {783 782 778 }
+		        } 
+		    365 = {
+		        ck = {786 785 }
+		        } 
+		    364 = {
+		        ck = {787 }
+		        } 
+		    363 = {
+		        ck = {789 788 }
+		        } 
+		    361 = {
+		        ck = {797 796 790 }
+		        prefered = {mam }
+		        culture=al_misr_arabic 
+		        name=mameluks 
+		        } 
+		    360 = {
+		        ck = {795 794 791 }
+		        } 
+		    1231 = {
+		        ck = {792 }
+		        } 
+		    1232 = {
+		        ck = {792 }
+		        } 
+		    1233 = {
+		        ck = {793 }
+		        } 
+		    1234 = {
+		        ck = {793 }
+		        } 
+		    362 = {
+		        ck = {799 798 }
+		        } 
+		    359 = {
+		        ck = {800 }
+		        } 
+		    358 = {
+		        ck = {802 801 }
+		        } 
+		    357 = {
+		        ck = {805 804 803 }
+		        } 
+		    356 = {
+		        ck = {808 807 806 }
+		        } 
+		    354 = {
+		        ck = {810 809 }
+		        prefered = {trp }
+		        culture=tuareg 
+		        name=tripoli 
+		        } 
+		    355 = {
+		        ck = {813 811 }
+		        } 
+		    126 = {
+		        ck = {812 }
+		        prefered = {kni }
+		        culture=maltese 
+		        name=the_knights 
+		        } 
+		    353 = {
+		        ck = {816 814 }
+		        } 
+		    352 = {
+		        ck = {815 }
+		        } 
+		    341 = {
+		        ck = {819 818 817 }
+		        prefered = {tun }
+		        culture=maghreb_arabic 
+		        name=tunisia 
+		        } 
+		    340 = {
+		        ck = {821 820 }
+		        } 
+		    339 = {
+		        ck = {822 }
+		        } 
+		    351 = {
+		        ck = {823 }
+		        } 
+		    338 = {
+		        ck = {831 825 824 }
+		        prefered = {alg }
+		        culture=berber 
+		        name=algiers 
+		        } 
+		    333 = {
+		        ck = {827 826 }
+		        } 
+		    350 = {
+		        ck = {829 828 }
+		        } 
+		    336 = {
+		        ck = {836 834 830 }
+		        } 
+		    337 = {
+		        ck = {832 }
+		        } 
+		    349 = {
+		        ck = {835 833 }
+		        } 
+		    346 = {
+		        ck = {837 }
+		        } 
+		    335 = {
+		        ck = {838 }
+		        } 
+		    334 = {
+		        ck = {841 }
+		        } 
+		    1751 = {
+		        ck = {839 }
+		        } 
+		    343 = {
+		        ck = {840 }
+		        prefered = {fez }
+		        culture=berber 
+		        name=fez 
+		        } 
+		    342 = {
+		        ck = {844 842 }
+		        } 
+		    344 = {
+		        ck = {843 }
+		        prefered = {mor }
+		        culture=maghreb_arabic 
+		        name=morocco 
+		        } 
+		    345 = {
+		        ck = {845 }
+		        } 
+		    347 = {
+		        ck = {846 }
+		        } 
+		    348 = {
+		        ck = {847 }
+		        } 
+		    366 = {
+		        ck = {848 }
+		        } 
+		    368 = {
+		        ck = {848 }
+		        } 
+		 }
+	 }
+} 
+
+# This section defines how to convert from CK tags to EU3 tags
+# It contains one or more subsection, one for each possible set of conversion
+# The name for a given set must be also defined in the "selection" section below or it won't be seen.
+# Each subsection contains a number of mandatory and ioptional fields:
+#   use =    mandatory, contains two subfields:
+#         type = stand_alone or differential
+#         base = name : in case the modification is slight, use the base definition and apply the differences
+#                       defined in this section ; you can refer to another differential section, but should
+#                       end up falling back on a stand_alone section.
+#   convert =  optional, contains a list of simple subfields in the form:
+#         cktag = eu3tag   or
+#         cktag = "eu3tag1,eu3tag2,...eu3tagN"
+#              these define the rules to convert a CK tag to an EU3 tag in preferential order (first is prefered)
+#   tag_pool = optional (cannot exist empty), contains possibly two optional subfields (don't use empty ones!)
+#         add = { TAG1 TAG2 ... TAGN }   add these tags to the tag pool
+#         rem = { TAG1 TAG2 ... TAGN }   remove these tags from the tag pool
+#         The tag pool is used to list the tags that may be chosen randomly if no other rule applies ; that's the
+#         last resort chance to get a tag. This will always be done last, when all countries have had their chance
+#         to get their tag.
+#   unavailable = optional, exact same format as tag_pool
+#         The list is used to render a tag unusable, whatever may have been written before
+#         First, these tags are removed from any tag pool
+#         Second, any tag in the convert section that refers to an unavailable tag is simply ignored
+#         This section is mostly used for:
+#         - removing some tags from selection (for exemple, you may not want Germany to come as a formed country)
+#         - removing some tags from selection because you used a convert section that is broad and uses some tags
+#           that are not allowed under the current option
+tags = {
+    HttT = {
+		use = { type=stand_alone }
+	    convert = {
+		    REBE = REB
+		    ABBA = "QAR,KHO,DUR,PER"
+            ABKH = "GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+	            ABYD = "CND,DUL,KAR,SYR,IRQ"
+            ACHA = "ATH,ACH,MOE,NAX,RAG,SER,CEP,CRT,TRE"
+            ADRI = "CND,DUL,KAR,SYR,IRQ"
+            AEGE = "CND,DUL,KAR,SYR,IRQ"
+		    AKAB = "MAM,TUN,TRP,FEZ,ALG,MOR"
+            AKER = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+		    ALAN = "NOG,AST,SIB,KAZ,QAS,CRI,AST"
+            ALEP = "KAR,CND,DUL,SYR,IRQ"
+		    ALEX = "MAM,TUN,TRP,FEZ,ALG,MOR"
+            ALGA = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+		    ALGE = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    ALHA = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    ALJA = "ALG,FEZ,MOR,TRP,TUN,MAM"
+            ALME = "CAS,GAL,CAT,NAV,GRA,POR,ARA"
+		    ALMO = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    ANJO = "ORL,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+            ANTI = "KAR,CND,DUL,SYR,IRQ"
+            APUL = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+		    ARAB = SHR
+            ARAG = "ARA,GAL,CAT,CAS,POR,NAV,GRA"
+		    ARGY = "SCO,NOL,YOR,LAN"
+		    ARMA = "AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+            ARME = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            ARMI = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+		    ARTO = "FLA,BRB,FRI,GEL,HAI,HOL,LIE,LUX,UTR"
+		    ASCA = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    ASSA = "MAM,TUN,TRP,FEZ,ALG,MOR"
+            ASTU = "GAL,NAV,CAT,GRA,ARA,CAS,POR"
+		    ASWA = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    ATHO = "SCO,NOL,YOR,LAN"
+            ATRI = "VEN,AQU,GEN,MAN,TUS,SIE,PIS,PAR,NAP,SIC"
+		    AUVE = "AUV,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    AYDI = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    AYYU = "DUL,KHO,QAR,PER"           
+            AZER = "GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            AZOV = "CRI,KAZ,GEO,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            BADA = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+		    BAGH = "QAR,KHO,DUR,PER"		     	    
+            BALE = "ARA,GAL,CAT,CAS,POR,NAV,GRA"
+		    BASR = ALH
+		    BAVA = "BAV,BOH,SLZ,SAX,PAL,WBG,ANS,MAI,WUR,BAD"
+		    BELG = "SER,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+            BELO = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+		    BENE = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    BENI = SHR
+            BERG = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            BERS = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+		    BERW = "ENG,LAN,YOR,NOL,CRN,WLS"
+            BJAR = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+		    BOHE = "BOH,BAV,SIL,BRA,SAX,PAL,SLZ"
+            BOLG = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+		    BORD = "GUY,AMG,ALS,BOU,BUR,CHP,DAU,FOI,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    BOSN = "BOS,SER,MON,RAG,ALB,WAL,TRA,BUL"
+		    BOUG = "BOU,AMG,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    BOUR = "BOU,AMG,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    BRAB = "BRB,FLA,FRI,GEL,HAI,HOL,LIE,LUX,UTR"
+            BRAG = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+		    BRAN = "BRA,POM,SIL,SAX,BOH,LUN,MKL,ANH,BRU"
+		    BRIT = "BRI,BOU,AMG,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA"
+		    BUKH = "KHI,SHY,KOK"
+		    BULG = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB"
+		    BURG = "BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+            BUTR = "CND,DUL,KAR,SYR,IRQ"	    
+            BYZA = "BYZ,GRE,BUL,MOE,TRE"
+            C001 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C002 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+		    C003 = "IRE,CNN,LEI,MNS,TYR"
+		    C004 = "IRE,CNN,LEI,MNS,TYR"
+		    C005 = "IRE,CNN,LEI,MNS,TYR"
+            C006 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+		    C007 = "IRE,CNN,LEI,MNS,TYR"
+		    C008 = "IRE,CNN,LEI,MNS,TYR"
+		    C009 = "IRE,CNN,LEI,MNS,TYR"
+		    C010 = "IRE,CNN,LEI,MNS,TYR"
+		    C011 = "IRE,CNN,LEI,MNS,TYR"
+		    C012 = "IRE,CNN,LEI,MNS,TYR"
+		    C013 = "IRE,CNN,LEI,MNS,TYR"
+		    C014 = "IRE,CNN,LEI,MNS,TYR"
+		    C015 = "IRE,CNN,LEI,MNS,TYR"
+		    C016 = "IRE,CNN,LEI,MNS,TYR"
+		    C017 = "WLS,CRN,YOR,LAN,NOL"
+		    C018 = "WLS,CRN,YOR,LAN,NOL"
+		    C019 = "WLS,CRN,YOR,LAN,NOL"
+		    C020 = "WLS,CRN,YOR,LAN,NOL"
+		    C021 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C022 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C023 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C024 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C025 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C026 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C027 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C028 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C029 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C030 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C031 = "CRN,WLS,LAN,YOR,LAN,ENG"
+		    C032 = "ENG,LAN,YOR,NOL,CRN,WLS"
+            C033 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+		    C034 = "SCO,NOL,YOR,LAN"
+		    C035 = "SCO,NOL,YOR,LAN"
+		    C036 = "SCO,NOL,YOR,LAN"
+		    C037 = "SCO,NOL,YOR,LAN"
+		    C038 = "SCO,NOL,YOR,LAN"
+		    C039 = "SCO,NOL,YOR,LAN"
+		    C040 = "SCO,NOL,YOR,LAN"
+		    C041 = "SCO,NOL,YOR,LAN"
+		    C042 = "SCO,NOL,YOR,LAN"
+		    C043 = "SCO,NOL,YOR,LAN"
+		    C044 = "SCO,NOL,YOR,LAN"
+		    C045 = "SCO,NOL,YOR,LAN"
+		    C046 = "SCO,NOL,YOR,LAN"
+		    C047 = "SCO,NOL,YOR,LAN"
+		    C048 = "SCO,NOL,YOR,LAN"
+		    C049 = "SCO,NOL,YOR,LAN"
+		    C050 = "SCO,NOL,YOR,LAN"
+		    C051 = "SCO,NOL,YOR,LAN"
+		    C052 = "NOL,YOR,LAN,SCO,ENG"
+		    C053 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C054 = "IRE,CNN,LEI,MNS,TYR"
+		    C055 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C056 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C057 = "YOR,LAN,NOL,CRN,WLS,ENG"
+		    C058 = "LAN,YOR,NOL,CRN,WLS,ENG"
+		    C059 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C060 = "WLS,CRN,LAN,YOR,NOL"
+		    C061 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C062 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C063 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C064 = "WLS,CRN,LAN,YOR,NOL"
+		    C065 = "WLS,CRN,LAN,YOR,NOL"
+		    C066 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C067 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C068 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C069 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C070 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C071 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C072 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C073 = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    C074 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C075 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C076 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C077 = "FLA,BRB,FRI,GEL,HAI,HOL,LIE,LUX,UTR"
+		    C078 = "FLA,BRB,FRI,GEL,HAI,HOL,LIE,LUX,UTR"
+		    C079 = "UTR,FLA,BRB,FRI,GEL,HAI,HOL,LIE,LUX"
+		    C080 = "HOL,UTR,FLA,BRB,FRI,GEL,HAI,LIE,LUX"
+		    C081 = "HOL,UTR,FLA,BRB,FRI,GEL,HAI,LIE,LUX"
+		    C082 = "GEL,HOL,UTR,FLA,BRB,FRI,HAI,LIE,LUX"
+		    C083 = "GEL,HOL,UTR,FLA,BRB,FRI,HAI,LIE,LUX"
+		    C084 = "FRI,GEL,HOL,UTR,FLA,BRB,HAI,LIE,LUX"
+		    C085 = "OLD,MUN,BRE,HAM,LUN,BRU,KOL,HES,KLE,LIE,TRI"
+		    C086 = "OLD,MUN,BRE,HAM,LUN,BRU,KOL,HES,KLE,LIE,TRI"
+		    C087 = "OLD,MUN,BRE,HAM,LUN,BRU,KOL,HES,KLE,LIE,TRI"
+		    C088 = "MUN,OLD,BRE,HAM,LUN,BRU,KOL,HES,KLE,LIE,TRI"
+		    C089 = "MUN,OLD,BRE,HAM,LUN,BRU,KOL,HES,KLE,LIE,TRI"
+		    C090 = "UTR,FLA,BRB,FRI,GEL,HAI,HOL,LIE,LUX"
+		    C091 = "UTR,FLA,BRB,FRI,GEL,HAI,HOL,LIE,LUX"
+		    C092 = "UTR,FLA,BRB,FRI,GEL,HAI,HOL,LIE,LUX"
+		    C093 = "FLA,BRB,FRI,GEL,HAI,HOL,LIE,LUX,UTR"
+		    C094 = "BRB,FLA,FRI,GEL,HAI,HOL,LIE,LUX,UTR"
+		    C095 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C096 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C097 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C098 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C099 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C100 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C101 = "BRI,NRM,PRO,GUY,TOU,BOU,AMG,ALS,CHP,DAU,FOI,NEV,ORL,FRA,BUR"
+		    C102 = "BRI,NRM,PRO,GUY,TOU,BOU,AMG,ALS,CHP,DAU,FOI,NEV,ORL,FRA,BUR"
+		    C103 = "BRI,NRM,PRO,GUY,TOU,BOU,AMG,ALS,CHP,DAU,FOI,NEV,ORL,FRA,BUR"
+		    C104 = "BRI,NRM,PRO,GUY,TOU,BOU,AMG,ALS,CHP,DAU,FOI,NEV,ORL,FRA,BUR"
+		    C105 = "BRI,NRM,PRO,GUY,TOU,BOU,AMG,ALS,CHP,DAU,FOI,NEV,ORL,FRA,BUR"
+		    C106 = "BRI,NRM,PRO,GUY,TOU,BOU,AMG,ALS,CHP,DAU,FOI,NEV,ORL,FRA,BUR"
+		    C107 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C108 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C109 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C110 = "ORL,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C111 = "ORL,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C112 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C113 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C114 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C115 = "LUX,BRB,FLA,FRI,GEL,HAI,HOL,LIE,UTR"
+		    C116 = "LIE,MUN,OLD,BRE,HAM,LUN,BRU,KOL,HES,KLE,TRI,BRB,FLA,FRI,GEL,HAI,HOL,LUX,UTR"
+		    C117 = "BRB,FLA,FRI,GEL,HAI,HOL,LIE,LUX,UTR"
+		    C118 = "KOL,MUN,OLD,BRE,HAM,LUN,BRU,HES,KLE,LIE,TRI"
+		    C119 = "KLE,MUN,OLD,BRE,HAM,LUN,BRU,KOL,HES,LIE,TRI"
+		    C120 = "HES,MUN,OLD,BRE,HAM,LUN,BRU,KOL,LIE,TRI,KLE"
+		    C121 = "HES,MUN,OLD,BRE,HAM,LUN,BRU,KOL,LIE,TRI,KLE"
+		    C122 = "MAI,SLZ,SAX,PAL,WBG,ANS,WUR,BAD"
+		    C123 = "PAL,MAI,SLZ,SAX,WBG,ANS,WUR,BAD"
+		    C124 = "PAL,MAI,SLZ,SAX,WBG,ANS,WUR,BAD"
+		    C125 = "BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR"
+		    C126 = "LUN,HES,MUN,OLD,BRE,HAM,BRU,KOL,LIE,TRI,KLE"
+		    C127 = "LOR,HES,MUN,OLD,BRE,HAM,LUN,BRU,KOL,LIE,TRI,KLE"
+		    C128 = "LOR,HES,MUN,OLD,BRE,HAM,LUN,BRU,KOL,LIE,TRI,KLE"
+		    C129 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C130 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C131 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C132 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C133 = "LOR,HES,MUN,OLD,BRE,HAM,LUN,BRU,KOL,LIE,TRI,KLE"
+		    C134 = "LUN,HES,MUN,OLD,BRE,HAM,BRU,KOL,LIE,TRI,KLE"
+		    C135 = "BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    C136 = "BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    C137 = "NEV,ORL,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C138 = "ORL,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C139 = "BOU,ORL,AMG,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C140 = "BOU,ORL,AMG,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C141 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C142 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C143 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C144 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C145 = "AUV,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    C146 = "AUV,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    C147 = "AUV,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    C148 = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    C149 = "GUY,BOU,ORL,AMG,ALS,BUR,CHP,DAU,FOI,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C150 = "BOU,ORL,AMG,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C151 = "AMG,BOU,ORL,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+            C152 = "NAV,GAL,CAT,GRA,ARA,CAS,POR"
+            C153 = "CAS,GAL,CAT,NAV,GRA,ARA,POR"
+            C154 = "CAS,GAL,CAT,NAV,GRA,ARA,POR"
+            C155 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C156 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C157 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C158 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C159 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C160 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C161 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C162 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C163 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C164 = "CAS,GAL,CAT,NAV,GRA,ARA,POR"
+            C165 = "CAS,GAL,CAT,NAV,GRA,ARA,POR"
+            C166 = "GRA,CAT,NAV,ARA,POR,GAL,CAS"
+            C167 = "GRA,CAT,NAV,ARA,POR,GAL,CAS"
+            C168 = "GRA,CAT,NAV,ARA,POR,GAL,CAS"
+            C169 = "CAS,GAL,CAT,NAV,GRA,ARA,POR"
+            C170 = "ARA,CAT,GAL,CAS,POR,NAV,GRA"
+            C171 = "ARA,CAT,GAL,CAS,POR,NAV,GRA"
+            C172 = "ARA,CAT,GAL,CAS,POR,NAV,GRA"
+            C173 = "CAT,GAL,NAV,GRA,ARA,CAS,POR"
+            C174 = "ARA,CAT,GAL,CAS,POR,NAV,GRA"
+            C175 = "ARA,CAT,GAL,CAS,POR,NAV,GRA"
+            C176 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C177 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C178 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C179 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C180 = "GRA,CAT,GAL,NAV,ARA,POR,CAS"
+            C181 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C182 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C183 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C184 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C185 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C186 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C187 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C188 = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+            C189 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C190 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C191 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C192 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C193 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C194 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C195 = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            C196 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C197 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C198 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C199 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C200 = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            C201 = "NAV,CAT,GAL,GRA,ARA,CAS,POR"
+            C202 = "ARA,GAL,CAT,CAS,POR,NAV,GRA"
+            C203 = "CAT,NAV,GAL,GRA,ARA,CAS,POR"
+            C204 = "CAT,NAV,GAL,GRA,ARA,CAS,POR"
+            C205 = "CAT,NAV,GAL,GRA,ARA,CAS,POR"
+            C206 = "CAT,NAV,GAL,GRA,ARA,CAS,POR"
+            C207 = "ARA,CAT,CAS,POR,GAL,NAV,GRA"
+		    C208 = "AMG,BOU,ORL,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C209 = "AMG,BOU,ORL,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C210 = "FOI,AMG,BOU,ORL,ALS,BUR,CHP,DAU,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+            C211 = "ARA,CAT,CAS,POR,GAL,NAV,GRA"
+		    C212 = "AVI,PAP"
+		    C213 = "AVI,PAP"
+		    C214 = "TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,DAU,GUY,NEV,NRM,AUV,PRO,FRA,BRI"
+		    C215 = "AMG,BOU,ORL,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C216 = "AMG,BOU,ORL,ALS,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    C217 = "AUV,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    C218 = "TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,DAU,GUY,NEV,NRM,AUV,PRO,FRA,BRI"
+		    C219 = "TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,DAU,GUY,NEV,NRM,AUV,PRO,FRA,BRI"
+		    C220 = "PRO,TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,DAU,GUY,NEV,NRM,AUV,FRA,BRI"
+		    C221 = "PRO,TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,DAU,GUY,NEV,NRM,AUV,FRA,BRI"
+		    C222 = "DAU,PRO,TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,GUY,NEV,NRM,AUV,FRA,BRI"
+		    C223 = "AVI,PAP"
+		    C224 = "AVI,PAP"
+		    C225 = "BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    C226 = "BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    C227 = "DAU,PRO,TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,GUY,NEV,NRM,AUV,FRA,BRI"
+		    C228 = "DAU,PRO,TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,GUY,NEV,NRM,AUV,FRA,BRI"
+		    C229 = "PRO,TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,DAU,GUY,NEV,NRM,AUV,FRA,BRI"
+            C230 = "SAV,SAR,PAR,PIS,PRO,MAN,MLO,MOD,ETR,FER,GEN,SIE,LOR"
+            C231 = "SAV,SAR,PAR,PIS,PRO,MAN,MLO,MOD,ETR,FER,GEN,SIE,LOR"
+            C232 = "SAV,SAR,PAR,PIS,PRO,MAN,MLO,MOD,ETR,FER,GEN,SIE,LOR"
+            C233 = "GEN,VEN,AQU,MLO,MAN,TUS,SIE,PIS,PAR,FER,MOD,NAP,SIC"
+            C234 = "MLO,MAN,TUS,SIE,PIS,PAR,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            C235 = "MLO,MAN,TUS,SIE,PIS,PAR,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            C236 = "SAV,SAR,PAR,PIS,PRO,MAN,MLO,MOD,ETR,FER,GEN,SIE,LOR"
+            C237 = "SAV,SAR,PAR,PIS,PRO,MAN,MLO,MOD,ETR,FER,GEN,SIE,LOR"
+            C238 = "SAV,SAR,PAR,PIS,PRO,MAN,MLO,MOD,ETR,FER,GEN,SIE,LOR"
+            C239 = "SAV,SAR,PAR,PIS,PRO,MAN,MLO,MOD,ETR,FER,GEN,SIE,LOR"	
+		    C240 = "BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+		    C241 = "SWI,SAV,MLO,LOR,WUR"
+		    C242 = "SWI,SAV,MLO,LOR,WUR"
+		    C243 = "SWI,SAV,MLO,LOR,WUR"
+		    C244 = "SWI,SAV,MLO,LOR,WUR"
+		    C245 = "SWI,SAV,MLO,LOR,WUR"
+		    C246 = "SWI,SAV,MLO,LOR,WUR"
+		    C247 = "SWI,SAV,MLO,LOR,WUR"
+		    C248 = "WUR,SWI,ANS,PAL,WBG,MAI,BAD,ALS"
+		    C249 = "BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR"
+		    C250 = "BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR"
+		    C251 = "WUR,SWI,ANS,PAL,WBG,MAI,BAD,ALS"
+		    C252 = "THU,WUR,ANS,PAL,WBG,MAI,BAD"
+		    C253 = "THU,WUR,ANS,PAL,WBG,MAI,BAD"
+		    C254 = "SAX,BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR,BOH,BRA"
+		    C255 = "SAX,BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR,BOH,BRA"
+		    C256 = "HAN,BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR"
+		    C257 = "BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR"
+		    C258 = "BRE,LUN,HES,MUN,OLD,HAM,BRU,KOL,LIE,TRI,KLE"
+		    C259 = "MKL,HAM,LUN,BRA,POM,DAN"
+		    C260 = "SHL,HAM,LUN,MKL,DAN"
+		    C261 = "SHL,HAM,LUN,MKL,DAN"
+		    C262 = "SHL,HAM,LUN,MKL,DAN"
+		    C263 = "SHL,HAM,LUN,MKL,DAN"
+            C264 = "DAN,SCA,GOT,SHL,MKL,SWE,NOR,FIN"
+            C265 = "DAN,SCA,GOT,SHL,MKL,SWE,NOR,FIN"
+            C266 = "DAN,SCA,GOT,SHL,MKL,SWE,NOR,FIN"
+            C267 = "DAN,SCA,GOT,SHL,MKL,SWE,NOR,FIN"
+            C268 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C269 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C270 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C271 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C272 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C273 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C274 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C275 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C276 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C277 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C278 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C279 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C280 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C281 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C282 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C283 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C284 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C285 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C286 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C287 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C288 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C289 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C290 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C291 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C292 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C293 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C294 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C295 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C296 = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            C297 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C298 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C299 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C300 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C301 = "GOT,SHL,DAN,SWE,NOR,FIN"
+            C302 = "DAN,SCA,MKL,GOT,SHL,HAM,BRE,LUN,SWE,NOR,FIN"
+            C303 = "DAN,SCA,MKL,GOT,SHL,HAM,BRE,LUN,SWE,NOR,FIN"
+		    C304 = "POM,BRA,MKL,SIL,LUN"
+            C305 = "DAN,SCA,MKL,GOT,SHL,HAM,BRE,LUN,SWE,NOR,FIN"
+		    C306 = "POM,BRA,MKL,SIL,LUN"
+		    C307 = "POM,BRA,MKL,SIL,LUN"
+		    C308 = "POM,BRA,MKL,SIL,LUN"
+		    C309 = "BRA,POM,SIL,SAX,BOH,LUN,MKL,ANH,BRU"
+		    C310 = "ANH,SIL,SAX,BOH,LUN,MKL,BRU,BRA,POM"
+		    C311 = "SAX,BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR,BOH,BRA"
+		    C312 = "SAX,BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR,BOH,BRA"
+		    C313 = "THU,WUR,ANS,PAL,WBG,MAI,BAD"
+		    C314 = "BAV,BOH,SLZ,SAX,PAL,WBG,ANS,MAI,WUR,BAD"
+		    C315 = "BAV,BOH,SLZ,SAX,PAL,WBG,ANS,MAI,WUR,BAD"
+		    C316 = "TIR,HAB,BAV,BOH,SLZ,SAX,PAL,WBG,ANS,MAI,WUR,BAD"
+		    C317 = "TIR,HAB,BAV,BOH,SLZ,SAX,PAL,WBG,ANS,MAI,WUR,BAD"
+            C318 = "MLO,MAN,TUS,SIE,PIS,PAR,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            C319 = "MAN,MLO,TUS,SIE,PIS,PAR,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            C320 = "MLO,MAN,TUS,SIE,PIS,PAR,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            C321 = "PAR,MLO,MAN,TUS,SIE,PIS,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            C322 = "MOD,PAR,MLO,MAN,TUS,SIE,PIS,FER,GEN,VEN,AQU,NAP,SIC"
+            C323 = "PAR,MLO,MAN,TUS,SIE,PIS,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            C324 = "COR,SAR,SIE,NAP,URB,PRO"
+            C325 = "SAR,COR,SIE,NAP,URB,PRO"
+            C326 = "SAR,COR,SIE,NAP,URB,PRO"
+            C327 = "TUS,MOD,PAR,MLO,MAN,SIE,PIS,FER,GEN,VEN,AQU,NAP,SIC"
+            C328 = "TUS,MOD,PAR,MLO,MAN,SIE,PIS,FER,GEN,VEN,AQU,NAP,SIC"
+            C329 = "URB,TUS,MOD,PAR,MLO,MAN,SIE,PIS,FER,GEN,VEN,AQU,NAP,SIC"
+            C330 = "SIE,URB,TUS,MOD,PAR,MLO,MAN,PIS,FER,GEN,VEN,AQU,NAP,SIC"
+            C331 = "PIS,SIE,URB,TUS,MOD,PAR,MLO,MAN,FER,GEN,VEN,AQU,NAP,SIC"
+            C332 = "PIS,SIE,URB,TUS,MOD,PAR,MLO,MAN,FER,GEN,VEN,AQU,NAP,SIC"
+		    C333 = "PAP,AVI"
+            C334 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C335 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C336 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C337 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C338 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C339 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C340 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C341 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C342 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C343 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C344 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C345 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C346 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C347 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C348 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            C349 = "PIS,SIE,URB,TUS,MOD,PAR,MLO,MAN,FER,GEN,VEN,AQU,NAP,SIC"
+            C350 = "PIS,SIE,URB,TUS,MOD,PAR,MLO,MAN,FER,GEN,VEN,AQU,NAP,SIC"
+            C351 = "PAR,MLO,MAN,TUS,SIE,PIS,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            C352 = "PAR,MLO,MAN,TUS,SIE,PIS,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            C353 = "FER,URB,PAR,MLO,MAN,TUS,SIE,PIS,MOD,GEN,VEN,AQU,NAP,SIC"
+            C354 = "MAN,FER,URB,PAR,MLO,TUS,SIE,PIS,MOD,GEN,VEN,AQU,NAP,SIC"
+            C355 = "MAN,FER,URB,PAR,MLO,TUS,SIE,PIS,MOD,GEN,VEN,AQU,NAP,SIC"
+            C356 = "VEN,AQU,GEN,MAN,TUS,SIE,PIS,PAR,NAP,SIC"
+            C357 = "VEN,AQU,GEN,MAN,TUS,SIE,PIS,PAR,NAP,SIC"
+            C358 = "VEN,AQU,GEN,MAN,TUS,SIE,PIS,PAR,NAP,SIC"
+            C369 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C370 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C371 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C372 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C373 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C374 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C375 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C376 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C377 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C378 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C379 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C380 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C381 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C382 = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            C383 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C384 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C385 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C386 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C387 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C388 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C389 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C390 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C391 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C392 = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            C393 = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            C394 = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            C395 = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            C396 = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            C397 = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            C398 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C399 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C400 = "KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS,GEO"
+            C401 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C402 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C403 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C404 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C405 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C406 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C407 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C408 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C409 = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            C410 = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            C411 = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            C412 = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            C413 = "PSK,MOS,NOV,RYA,TVE,PLT,YAR"
+            C414 = "TVE,PLT,MOS,NOV,RYA,PSK,YAR"
+            C415 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C416 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C417 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C418 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C419 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C420 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C421 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C422 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C423 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C424 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C425 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C426 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C427 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C428 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C429 = "POL,MAZ,KRA,PRU,KUR,RIG"
+		    C430 = "SAX,BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR,BOH,BRA"
+            C431 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C432 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C433 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C434 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C435 = "POL,MAZ,KRA,PRU,KUR,RIG"    
+		    C436 = "BOH,BAV,SIL,BRA,SAX,PAL,SLZ"
+		    C437 = "BOH,BAV,SIL,BRA,SAX,PAL,SLZ"
+		    C438 = "BOH,BAV,SIL,BRA,SAX,PAL,SLZ"
+		    C439 = "BOH,BAV,SIL,BRA,SAX,PAL,SLZ"
+		    C440 = "BOH,BAV,SIL,BRA,SAX,PAL,SLZ"
+		    C441 = "BOH,BAV,SIL,BRA,SAX,PAL,SLZ"
+		    C442 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C443 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C444 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C445 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C446 = "HAB,TIR,SLZ,PAL,BOH,HUN,WUR"
+		    C447 = "HAB,TIR,SLZ,PAL,BOH,HUN,WUR"
+		    C448 = "SLZ,BAV,TIR,PAL"
+		    C449 = "HAB,TIR,SLZ,PAL,BOH,HUN,WUR"
+		    C450 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C451 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C452 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C453 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C454 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+            C455 = "STY,SLZ,TIR,AQU,PAL"
+            C456 = "AQU,STY,SLZ,TIR,PAL"
+            C457 = "AQU,STY,SLZ,TIR,PAL"
+            C458 = "AQU,STY,SLZ,TIR,PAL"
+		    C459 = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    C460 = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    C461 = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    C462 = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    C463 = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    C464 = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    C465 = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    C466 = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    C467 = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    C468 = "RAG,CRO,BOS,SER,MON,ALB,TRA,WAL"
+		    C469 = "RAG,CRO,BOS,SER,MON,ALB,TRA,WAL"
+		    C470 = "ALB,RAG,CRO,BOS,SER,MON,TRA,WAL"
+		    C471 = "RAG,CRO,BOS,SER,MON,ALB,TRA,WAL"
+		    C472 = "RAG,CRO,BOS,SER,MON,ALB,TRA,WAL"
+		    C473 = "RAG,CRO,BOS,SER,MON,ALB,TRA,WAL"
+            C474 = "CEP,NAX,MOE,CRT,CYP"
+            C475 = "ATH,ACH,MOE,NAX,RAG,SER,CEP,CRT,TRE"
+            C476 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C477 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C478 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C479 = "CRT,CEP,MOE,GRE,ATH,ACH,MOE,NAX,TRE"
+            C480 = "CRT,CEP,MOE,GRE,ATH,ACH,MOE,NAX,TRE"
+		    C481 = "RAG,CRO,BOS,SER,MON,ALB,TRA,WAL"
+            C482 = "ATH,ACH,MOE,NAX,RAG,SER,CEP,CRT,TRE"
+            C483 = "KNI,NAX,CEP,CRT"
+            C484 = "NAX,CEP,CRT,MOE,ATH,ACH,GRE"
+            C485 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C486 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C487 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C488 = "ATH,ACH,MOE,NAX,RAG,SER,CEP,CRT,TRE"
+            C489 = "ATH,ACH,MOE,NAX,RAG,SER,CEP,CRT,TRE"
+            C490 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C491 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C492 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C493 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C494 = "CND,DUL,KAR,SYR,IRQ"
+            C495 = "CND,DUL,KAR,SYR,IRQ"
+            C496 = "CND,DUL,KAR,SYR,IRQ"
+            C497 = "CND,DUL,KAR,SYR,IRQ"              
+		    C498 = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB"
+		    C499 = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB"
+		    C500 = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB"
+		    C501 = "SER,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    C502 = "SER,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    C503 = "BOS,SER,CRO,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    C504 = "BOS,SER,CRO,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    C505 = "SER,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    C506 = "SER,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    C507 = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB"
+		    C508 = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB"
+		    C509 = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB"
+		    C510 = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB"
+		    C511 = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB"
+		    C512 = "MOL,BOS,SER,CRO,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    C513 = "MOL,BOS,SER,CRO,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    C514 = "WAL,MOL,TRA,BUL,BOS,SER,CRO,BOS,MON,RAG,ALB"
+		    C515 = "WAL,MOL,TRA,BUL,BOS,SER,CRO,BOS,MON,RAG,ALB"
+		    C516 = "WAL,MOL,TRA,BUL,BOS,SER,CRO,BOS,MON,RAG,ALB"
+		    C517 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C518 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C519 = "TRA,WAL,ALB,RAG,MON,BOS,SER,HUN,BUL"
+		    C520 = "TRA,WAL,ALB,RAG,MON,BOS,SER,HUN,BUL"
+		    C521 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C522 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C523 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C524 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C525 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+            C526 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C527 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C528 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C529 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C530 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C531 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C532 = "POL,MAZ,KRA,PRU,KUR,RIG"
+		    C533 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+            C534 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C535 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C536 = "POL,MAZ,KRA,PRU,KUR,RIG"
+		    C537 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C538 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C539 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C540 = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    C541 = "MOL,BOS,SER,CRO,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    C542 = "MOL,BOS,SER,CRO,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+            C543 = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C544 = "POL,MAZ,KRA,PRU,KUR,RIG"
+		    C545 = "MOL,BOS,SER,CRO,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+            C546 = "POL,MAZ,KRA,PRU,KUR,RIG"
+            C547 = "POL,MAZ,KRA,PRU,KUR,RIG"                  
+            C548 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C549 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C550 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C551 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C552 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C553 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C554 = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C555 = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C556 = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C557 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C558 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C559 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C560 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C561 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C562 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C563 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C564 = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C565 = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C566 = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+		    C567 = "GOL,QAS,NOG,AST,SIB,KAZ"
+            C568 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+		    C569 = "MOL,BOS,SER,CRO,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+            C570 = "TVE,PLT,MOS,NOV,RYA,PSK,YAR"
+            C571 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C572 = "YAR,PSK,RYA,TVE,PLT,MOS,NOV"
+            C573 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C574 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C575 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            C576 = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+		    C577 = "GOL,QAS,NOG,AST,SIB,KAZ"
+            C578 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+		    C579 = "GOL,QAS,NOG,AST,SIB,KAZ"
+		    C580 = "GOL,QAS,NOG,AST,SIB,KAZ"
+            C581 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+            C582 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+            C583 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+            C584 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+            C585 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+            C586 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C587 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C588 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+            C589 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+            C590 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+            C591 = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+		    C592 = "GOL,QAS,NOG,AST,SIB,KAZ"
+		    C593 = "GOL,QAS,NOG,AST,SIB,KAZ"
+		    C594 = "GOL,QAS,NOG,AST,SIB,KAZ"
+		    C595 = "GOL,QAS,NOG,AST,SIB,KAZ"
+            C596 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C597 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C598 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C599 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C600 = "GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C601 = "GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C602 = "GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C603 = "GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C604 = "GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C605 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C606 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            C607 = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+		    C608 = "GOL,QAS,NOG,AST,SIB,KAZ"
+            C609 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C610 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C611 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C612 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            C613 = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+		    C614 = "GOL,QAS,NOG,AST,SIB,KAZ"
+		    C615 = "GOL,QAS,NOG,AST,SIB,KAZ"
+		    C616 = "GOL,QAS,NOG,AST,SIB,KAZ"
+		    C617 = "GOL,QAS,NOG,AST,SIB,KAZ"
+		    C618 = "AST,CRI,KAZ,QAS,NOG,SIB"
+		    C619 = "GOL,QAS,NOG,AST,SIB,KAZ"
+		    C620 = "AST,CRI,KAZ,QAS,NOG,SIB"
+		    C621 = "NOG,AST,SIB,KAZ,QAS,CRI,AST"
+		    C622 = "KZH,KHI,SHY,KOK"
+		    C623 = "NOG,AST,SIB,KAZ,QAS,CRI,AST"
+		    C624 = "NOG,AST,SIB,KAZ,QAS,CRI,AST"
+		    C625 = "NOG,AST,SIB,KAZ,QAS,CRI,AST"
+		    C626 = "SHY,KHI,KOK"
+		    C627 = "SHY,KHI,KOK"
+		    C628 = "KHI,SHY,KOK"
+		    C629 = "KHI,SHY,KOK"
+		    C630 = "SHY,KHI,KOK"
+		    C631 = "SHY,KHI,KOK"
+		    C632 = "PER,KHO,QAR,DUR"
+		    C633 = "PER,KHO,QAR,DUR"
+		    C634 = "PER,KHO,QAR,DUR"
+		    C635 = "PER,KHO,QAR,DUR"
+		    C636 = "PER,KHO,QAR,DUR"
+		    C637 = "PER,KHO,QAR,DUR"
+		    C638 = "PER,KHO,QAR,DUR"
+		    C639 = "PER,KHO,QAR,DUR"
+		    C640 = "PER,KHO,QAR,DUR"
+		    C641 = "PER,KHO,QAR,DUR"
+		    C642 = "PER,KHO,QAR,DUR"
+		    C643 = "PER,KHO,QAR,DUR"
+		    C644 = "PER,KHO,QAR,DUR"
+		    C645 = "PER,KHO,QAR,DUR"
+		    C646 = "PER,KHO,QAR,DUR"
+		    C647 = "PER,KHO,QAR,DUR"
+		    C648 = "PER,KHO,QAR,DUR"
+		    C649 = "QAR,KHO,DUR,PER"
+		    C650 = "QAR,KHO,DUR,PER"
+		    C651 = "QAR,KHO,DUR,PER"
+		    C652 = "QAR,KHO,DUR,PER"
+		    C653 = "PER,KHO,QAR,DUR"
+		    C654 = "QAR,KHO,DUR,PER"
+		    C655 = "QAR,KHO,DUR,PER"
+		    C656 = "PER,KHO,QAR,DUR"
+		    C657 = "PER,KHO,QAR,DUR"
+		    C658 = "PER,KHO,QAR,DUR"
+		    C659 = "PER,KHO,QAR,DUR"
+		    C660 = "PER,KHO,QAR,DUR"
+		    C661 = "PER,KHO,QAR,DUR"
+		    C662 = "QAR,KHO,DUR,PER"
+		    C663 = "QAR,KHO,DUR,PER"
+		    C664 = "PER,KHO,QAR,DUR"
+		    C665 = "QAR,KHO,DUR,PER"
+            C676 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C677 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+		    C668 = "QAR,KHO,DUR,PER"
+		    C669 = "QAR,KHO,DUR,PER"
+		    C670 = "QAR,KHO,DUR,PER"
+		    C671 = "QAR,KHO,DUR,PER"            
+            C672 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+            C673 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+            C674 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+            C675 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+		    C676 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,RYA,QAS"
+		    C677 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,RYA,QAS"
+            C678 = "TRE,CND,DUL,KAR,SYR,IRQ"            
+            C679 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C680 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C681 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+            C682 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+            C683 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+            C684 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+		    C685 = "QAR,KHO,DUR,PER"
+		    C686 = "QAR,KHO,DUR,PER"
+		    C687 = "QAR,KHO,DUR,PER"
+		    C688 = "PER,KHO,QAR,DUR"
+		    C689 = "PER,KHO,QAR,DUR"
+		    C690 = "QAR,KHO,DUR,PER"
+		    C691 = "QAR,KHO,DUR,PER"
+		    C692 = "QAR,KHO,DUR,PER"
+		    C693 = "QAR,KHO,DUR,PER"
+		    C694 = "QAR,KHO,DUR,PER"
+		    C695 = "QAR,KHO,DUR,PER"
+		    C696 = "QAR,KHO,DUR,PER"
+		    C697 = "QAR,KHO,DUR,PER"            
+            C698 = "CYP,CRT,NAX"
+            C699 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+            C700 = "AKK,CND,DUL,IRQ,KAR,SYR,TRE"
+		    C701 = "DUL,KHO,QAR,PER"
+		    C702 = "DUL,KHO,QAR,PER"            
+            C703 = "TRE,CND,DUL,KAR,SYR,IRQ"
+            C704 = "TRE,CND,DUL,KAR,SYR,IRQ"
+		    C705 = "DUL,KHO,QAR,PER"
+		    C706 = "DUL,KHO,QAR,PER"
+		    C707 = "DUL,KHO,QAR,PER"
+		    C708 = "DUL,KHO,QAR,PER"
+            C709 = "CYP,CRT,NAX,CEP"
+            C710 = "CYP,CRT,NAX,CEP"
+		    C711 = "QAR,KHO,DUR,PER"
+		    C712 = "QAR,KHO,DUR,PER"
+		    C713 = "QAR,KHO,DUR,PER"
+		    C714 = "QAR,KHO,DUR,PER"
+		    C715 = "QAR,KHO,DUR,PER"
+		    C716 = SHR
+		    C717 = SHR
+		    C718 = SHR
+		    C719 = SHR
+		    C720 = SHR
+            C721 = "CYP,CRT,NAX,CEP"
+            C722 = "CYP,CRT,NAX,CEP"
+            C723 = "CYP,CRT,NAX,CEP"
+		    C724 = "QAR,KHO,DUR,PER"
+		    C725 = "QAR,KHO,DUR,PER"
+		    C726 = "QAR,KHO,DUR,PER"
+		    C727 = "QAR,KHO,DUR,PER"
+		    C728 = "QAR,KHO,DUR,PER"
+		    C729 = "QAR,KHO,DUR,PER"
+		    C730 = "QAR,KHO,DUR,PER"
+		    C731 = "QAR,KHO,DUR,PER"
+		    C732 = "QAR,KHO,DUR,PER"            
+            C733 = "KAR,CND,DUL,SYR,IRQ"
+            C734 = "KAR,CND,DUL,SYR,IRQ"
+            C735 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C736 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C737 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            C738 = "TRE,CND,DUL,KAR,SYR,IRQ"
+            C739 = "CND,DUL,KAR,SYR,IRQ"
+            C740 = "CND,DUL,KAR,SYR,IRQ"
+            C741 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            C742 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            C743 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C744 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C745 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C746 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C747 = "NAX,CEP,CRT,MOE,ATH,ACH,GRE"
+            C748 = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            C749 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            C750 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            C751 = "CND,DUL,KAR,SYR,IRQ"
+            C752 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            C753 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            C754 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            C755 = "NAX,CEP,CRT,MOE,ATH,ACH,GRE"
+            C756 = "CYP,CRT,NAX,CEP"
+            C757 = "CYP,CRT,NAX,CEP"
+            C758 = "KAR,CND,DUL,SYR,IRQ"
+            C759 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            C760 = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"                        
+            C761 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C762 = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            C763 = "CYP,CRT,NAX,CEP"
+            C764 = "CYP,CRT,NAX,CEP"
+            C765 = "CYP,CRT,NAX,CEP"
+            C766 = "CYP,CRT,NAX,CEP"
+            C767 = "CYP,CRT,NAX,CEP"
+            C768 = "CYP,CRT,NAX,CEP"
+            C769 = "CYP,CRT,NAX,CEP"
+            C770 = "CYP,CRT,NAX,CEP"
+            C771 = "CYP,CRT,NAX,CEP"
+            C772 = "CYP,CRT,NAX,CEP"
+            C773 = "CYP,CRT,NAX,CEP"
+            C774 = "CYP,CRT,NAX,CEP"
+            C775 = "CYP,CRT,NAX,CEP"
+            C776 = "CYP,CRT,NAX,CEP"
+            C777 = "CYP,CRT,NAX,CEP"
+            C778 = "CYP,CRT,NAX,CEP"
+            C779 = "CYP,CRT,NAX,CEP"
+            C780 = "CYP,CRT,NAX,CEP"
+            C781 = "CYP,CRT,NAX,CEP"
+            C782 = "CYP,CRT,NAX,CEP"
+            C783 = "CYP,CRT,NAX,CEP"
+            C784 = "CYP,CRT,NAX,CEP"
+		    C785 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C786 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C787 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C788 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C789 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C790 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C791 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C792 = "NUB,MAM"
+		    C793 = "NUB,MAM"
+		    C794 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C795 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C796 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C797 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C798 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C799 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C800 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C801 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C802 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C803 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C804 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C805 = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    C806 = "TRP,TUN,MOR,FEZ,MAM,ALG"
+		    C807 = "TRP,TUN,MOR,FEZ,MAM,ALG"
+		    C808 = "TRP,TUN,MOR,FEZ,MAM,ALG"
+		    C809 = "TRP,TUN,MOR,FEZ,MAM,ALG"
+		    C810 = "TRP,TUN,MOR,FEZ,MAM,ALG"
+		    C811 = "TRP,TUN,MOR,FEZ,MAM,ALG"
+		    C812 = "KNI,LIT,TEU"
+		    C813 = "TRP,TUN,MOR,FEZ,MAM,ALG"
+		    C814 = "TUN,TRP,MOR,FEZ,MAM,ALG"
+		    C815 = "TUN,TRP,MOR,FEZ,MAM,ALG"
+		    C816 = "TUN,TRP,MOR,FEZ,MAM,ALG"
+		    C817 = "TUN,TRP,MOR,FEZ,MAM,ALG"
+		    C818 = "TUN,TRP,MOR,FEZ,MAM,ALG"
+		    C819 = "TUN,TRP,MOR,FEZ,MAM,ALG"
+		    C820 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C821 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C822 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C823 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C824 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C825 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+            C826 = "ARA,CAT,CAS,POR,GAL,NAV,GRA"
+            C827 = "ARA,CAT,CAS,POR,GAL,NAV,GRA"
+		    C828 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C829 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C830 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C831 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C832 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C833 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C834 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C835 = "ALG,FEZ,MOR,TRP,TUN,MAM"
+		    C836 = "FEZ,MOR,ALG,TRP,TUN,MAM"
+		    C837 = "FEZ,MOR,ALG,TRP,TUN,MAM"
+		    C838 = "FEZ,MOR,ALG,TRP,TUN,MAM"
+		    C839 = "FEZ,MOR,ALG,TRP,TUN,MAM"
+		    C840 = "FEZ,MOR,ALG,TRP,TUN,MAM"
+		    C841 = "FEZ,MOR,ALG,TRP,TUN,MAM"
+		    C842 = "FEZ,MOR,ALG,TRP,TUN,MAM"
+		    C843 = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    C844 = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    C845 = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    C846 = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    C847 = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    C848 = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    C898 = "PAP,AVI"
+		    C995 = "BRE,LUN,HES,MUN,OLD,HAM,BRU,KOL,LIE,TRI,KLE"
+            C997 = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+		    CAIR = "MAM,TUN,TRP,FEZ,ALG,MOR"
+            CALA = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            CAMP = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            CAND = "CND,DUL,KAR,SYR,IRQ"       
+            CAST = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            CATA = "CAT,GAL,NAV,GRA,ARA,CAS,POR"
+		    CHAL = "QAR,KHO,DUR,PER"                                     
+		    CHAM = "CHP,BOU,AMG,ALS,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+            CHEE = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            CHER = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            CILI = "ARM,GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            COIM = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+		    CONN = "CNN,IRE,LEI,MNS,TYR"
+		    CONS = "ALG,FEZ,MOR,TRP,TUN,MAM"
+            CORD = "GRA,CAT,NAV,ARA,POR,GAL,CAS"
+		    CORN = "CRN,WLS,LAN,YOR,LAN,ENG"
+            COUR = "KUR,RIG,PRU,MAZ,KRA,DNZ"
+            CRIM = "CRI,UKR,KAZ,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+		    CROA = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    CUMA = "AST,CRI,KAZ,QAS,NOG,SIB"
+		    CUMB = "ENG,LAN,YOR,NOL,CRN,WLS"
+            CURO = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            CYPR = "CYP,CRT,NAX,CEP"
+		    CYRE = "TRP,TUN,MOR,FEZ,MAM,ALG"
+		    DAMA = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    DAMI = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    DAUP = "DAU,PRO,TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,GUY,NEV,NRM,AUV,FRA,BRI"
+		    DBAS = "QAR,KHO,DUR,PER"
+		    DBOH = "BOH,BAV,SIL,BRA,SAX,PAL,SLZ"
+            DCAS = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+		    DCRO = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+		    DEHE = "WLS,CRN,LAN,YOR,NOL"
+            DENM = "DAN,SCA,MKL,GOT,SHL,HAM,BRE,LUN,SWE,NOR,FIN"
+            DERB = "KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS,GEO"
+		    DFRA = "MAI,SLZ,SAX,PAL,WBG,ANS,WUR,BAD"
+            DGEO = "GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+		    DMES = "QAR,KHO,DUR,PER"            
+            DNAV = "NAV,CAT,GAL,GRA,ARA,CAS,POR"
+            DONA = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            DORO = "CND,DUL,KAR,SYR,IRQ"
+		    DSER = "SER,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+            DSYR = "DUL,KHO,QAR,PER,IRQ"
+		    DTUN = "TUN,TRP,MOR,FEZ,MAM,ALG"
+            DYRR = "CND,DUL,KAR,SYR,IRQ"
+		    EDES = "DUL,KHO,QAR,PER"            
+		    EGYP = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    ELRI = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    ENGL = "ENG,LAN,YOR,NOL,CRN,WLS"
+            ERET = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            ERZE = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            ESAM = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+		    ESFA = "PER,KHO,QAR,DUR"            
+		    ESSX = "ENG,LAN,YOR,NOL,CRN,WLS"
+            ESTH = "TEU,LIV,KRA,DNZ,RIG,MAZ"
+            ESTS = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+		    EUPH = "QAR,KHO,DUR,PER"            
+            FARO = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+		    FATI = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    FESA = "FEZ,MOR,ALG,TRP,TUN,MAM"
+            FINL = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+		    FLAN = "FLA,BRB,FRI,GEL,HAI,HOL,LIE,LUX,UTR"
+		    FRAC = "MAI,SLZ,SAX,PAL,WBG,ANS,WUR,BAD"
+		    FRAN = "FRA,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,BRI"
+		    FRIE = "FRI,BRB,FLA,GEL,HAI,HOL,LIE,LUX,UTR"
+            GALA = "CND,DUL,KAR,SYR,IRQ"
+            GALC = "GAL,NAV,CAT,GRA,ARA,CAS,POR"
+            GALE = "CYP,CRT,NAX,CEP"
+            GALI = "POL,MAZ,KRA,PRU,KUR,RIG"
+		    GALL = "SCO,NOL,YOR,LAN"
+            GENO = "GEN,VEN,AQU,MLO,MAN,TUS,SIE,PIS,PAR,FER,MOD,NAP,SIC"
+            GEOR = "GEO,CRI,KAZ,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS"
+            GERI = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            GERM = "GER,PRU,BRA,BOH,BAV,ANH,ANS,BAD,BAV,BRE,BRU,FRN,HAB,HAM,HAN,HES,KLE,KOL,LOR,LUN,MAG,MAI,MKL,MUN,OLD,PAL,POM,SAX,SIL,SLZ,STY,SWI,THU,TIR,TRI,WBG,WES,WUR"
+		    GILA = "PER,KHO,QAR,DUR"            
+		    GLOU = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    GOLD = "GOL,QAS,NOG,AST,SIB,KAZ"
+            GOTL = "GOT,SHL,DAN,SWE,NOR,FIN"
+            GPOL = "POL,MAZ,KRA,PRU,KUR,RIG"
+            GRAN = "GRA,CAT,NAV,ARA,POR,GAL,CAS"
+		    GWYN = "WLS,CRN,LAN,YOR,NOL"
+		    HAIN = "BRB,FLA,FRI,GEL,HAI,HOL,LIE,LUX,UTR"
+		    HAMM = "HAM,BRE,LUN,HES,MUN,OLD,BRU,KOL,LIE,TRI,KLE"
+		    HAMP = "ENG,LAN,YOR,NOL,CRN,WLS"
+            HELL = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            HLYN = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            HOLS = "SHL,HAM,LUN,MKL,DAN"
+		    HOMS = "PER,KHO,QAR,DUR"            
+            HORM = "CND,DUL,KAR,SYR,IRQ"  
+		    HOSP = "KNI,LIT,TEU"
+		    HREE = GER
+		    HUNG = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+            ICEL = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            IKON = "TRE,CND,DUL,KAR,SYR,IRQ"
+		    ILKH = "TIM,GOL,KAZ,NOG,SIB,CRI,SHY"
+		    IMER = "NOG,AST,SIB,KAZ,QAS,CRI,AST"
+            INGE = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+		    IREL = "IRE,CNN,LEI,MNS,TYR"
+            ISTR = "AQU,STY,SLZ,TIR,PAL"
+            ITAL = "ITA,VEN,AQU,GEN,ETR,FER,MAN,MLO,MOD,NAP,PAR,PIS,SAR,SAV,SIC,SIE,TUS,URB"
+            JAMT = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            JERU = "KOJ,CYP,CRT,NAX,CEP"
+		    KAFS = SHR
+            KAIR = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            KAJA = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            KAPP = "CND,DUL,KAR,SYR,IRQ"           
+		    KARA = "SHY,KHI,KOK"
+		    KARB = "QAR,DUR,PER"
+            KARE = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            KARM = "KAR,CND,DUL,SYR,IRQ"
+            KARN = "STY,SLZ,TIR,AQU,PAL"
+            KASS = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            KEXH = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            KHAZ = "KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS,GEO"
+		    KHWA = "SHY,KHI,KOK"
+            KIEV = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+		    KIRK = "QAR,KHO,DUR,PER"                                  
+            KOLA = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            KRAI = "STY,AQU,SLZ,TIR,PAL"
+            KRAK = "POL,MAZ,KRA,PRU,KUR,RIG"
+            KRET = "CRT,CEP,MOE,GRE,ATH,ACH,MOE,NAX,TRE"
+		    LANC = "LAN,YOR,NOL,CRN,WLS,ENG"
+		    LANG = "AVI,PAP"
+            LAOD = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+		    LEIN = "LEI,IRE,CNN,MNS,TYR"
+		    LEMA = "TRP,TUN,MOR,FEZ,MAM,ALG"
+            LEON = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+            LETT = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            LITH = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            LITT = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            LIVO = "TEU,LIT,KNI"
+		    LOLO = "LOR,HES,MUN,OLD,BRE,HAM,LUN,BRU,KOL,LIE,TRI,KLE"
+            LOMB = "MLO,MAN,TUS,SIE,PIS,PAR,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+		    LOTH = "SCO,NOL,YOR,LAN"
+            LPOL = "POL,MAZ,KRA,PRU,KUR,RIG"
+		    LURI = "PER,KHO,QAR,DUR"
+		    LUTA = "PER,KHO,QAR,DUR"            
+		    LUXE = "LUX,BRB,FLA,FRI,GEL,HAI,HOL,LIE,UTR"
+            LYKI = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+		    MADA = SHR
+		    MALE = SHR
+            MALL = "ARA,CAT,CAS,POR,GAL,NAV,GRA"
+		    MAML = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    MAMM = SHR
+		    MANN = "WLS,CRN,LAN,YOR,NOL"
+		    MARA = "SCO,NOL,YOR,LAN"
+		    MARB = SHR
+            MARC = "URB,TUS,MOD,PAR,MLO,MAN,SIE,PIS,FER,GEN,VEN,AQU,NAP,SIC"
+            MARI = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+		    MARR = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    MAUR = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    MAZA = "PER,KHO,QAR,DUR"            
+            MAZO = "POL,MAZ,KRA,PRU,KUR,RIG"
+		    MBAG = "QAR,KHO,DUR,PER"
+		    MDAA = "QAR,KHO,DUR,PER"
+		    MDAM = "QAR,KHO,DUR,PER"
+		    MEAT = "IRE,CNN,LEI,MNS,TYR"
+            MECK = "MKL,HAM,LUN,BRA,POM,DAN"
+		    MEDE = "QAR,KHO,DUR,PER"
+		    MEDI = SHR
+		    MEIS = "SAX,BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR,BOH,BRA"
+		    MELA = "QAR,KHO,DUR,PER"            
+            MENT = "CND,DUL,KAR,SYR,IRQ"       
+		    MESO = "QAR,KHO,DUR,PER"                 
+            MILA = "MLO,MAN,TUS,SIE,PIS,PAR,FER,MOD,GEN,VEN,AQU,NAP,SIC"
+            MINS = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+		    MJER = SHR
+		    MKHW = SHR
+		    MMAZ = SHR
+		    MMED = SHR
+		    MMOS = "QAR,KHO,DUR,PER"            
+		    MOLD = "MOL,BOS,SER,CRO,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+		    MORA = "BOH,BAV,SIL,BRA,SAX,PAL,SLZ"
+            MORD = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+		    MORO = "MOR,FEZ,ALG,TRP,TUN,MAM"
+            MOSC = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            MOSK = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+		    MSIS = SHR
+		    MTRI = "TRP,TUN,MOR,FEZ,MAM,ALG"
+		    MUNS = "MNS,IRE,CNN,LEI,TYR"
+		    MURA = "MAM,TUN,TRP,FEZ,ALG,MOR"
+            MURC = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            MURO = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+		    NAFR = "ALG,FEZ,MOR,TRP,TUN,MAM"
+            NAPL = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+            NAVA = "NAV,CAT,GAL,GRA,ARA,CAS,POR"
+            NIKA = "CND,DUL,KAR,SYR,IRQ"
+            NIKO = "CND,DUL,KAR,SYR,IRQ"
+		    NORF = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    NORM = "NRM,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+            NORR = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            NORW = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            NOSE = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+            NOVG = "NOV,MOS,PSK,RYA,TVE,PLT,YAR"
+		    NUBI = "NUB,MAM"
+		    ORKN = "SCO,NOL,YOR,LAN"
+		    ORLE = "ORL,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+		    OSTE = "HAB,TIR,SLZ,PAL,BOH,HUN,WUR"
+            OSTR = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            OTTO = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"  
+            OULT = "CYP,CRT,NAX,CEP"
+		    OXFO = "ENG,LAN,YOR,NOL,CRN,WLS"
+            PALE = "CYP,CRT,NAX,CEP"
+		    PALM = "MAM,TUN,TRP,FEZ,ALG,MOR"
+		    PAPA = "PAP,AVI"
+		    PECH = "AST,CRI,KAZ,QAS,NOG,SIB"
+		    PECS = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+            PELO = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            PERE = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+		    PERS = "PER,KHO,QAR,DUR"                      
+		    PEST = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    PETR = SHR
+		    PICA = "NRM,BUR,BOU,AMG,ALS,CHP,DAU,FOI,GUY,NEV,NRM,ORL,PRO,TOU,FRA,BRI"
+            PISA = "PIS,SIE,URB,TUS,MOD,PAR,MLO,MAN,FER,GEN,VEN,AQU,NAP,SIC"
+            PODL = "POL,MAZ,KRA,PRU,KUR,RIG"
+		    POIT = "ORL,AMG,ALS,BOU,BUR,CHP,DAU,FOI,GUY,NEV,NRM,AUV,PRO,TOU,FRA,BRI"
+            POLA = "POL,MAZ,KRA,PRU,KUR,RIG"
+            POLO = "PLT,PSK,MOS,NOV,RYA,TVE,YAR"
+            POLV = "POL,MAZ,KRA,PRU,KUR,RIG"
+		    POMM = "POM,BRA,MKL,SIL,LUN"
+            PORT = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+		    PRES = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+            PRON = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+		    PROV = "PRO,TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,DAU,GUY,NEV,NRM,AUV,FRA,BRI"
+            PRUS = "PRU,MAZ,KRA,KUR,POL,RIG"
+		    PRUT = "TEU,LIT,KNI"
+            PSKO = "PSK,MOS,NOV,RYA,TVE,PLT,YAR"
+		    QARA = "QAR,KHO,DUR,PER"
+		    QOMA = "PER,KHO,QAR,DUR"            
+            ROMA = "URB,TUS,MOD,PAR,MLO,MAN,SIE,PIS,FER,GEN,VEN,AQU,NAP,SIC"
+            ROST = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            RUMS = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"            
+            RUSS = "RUS,MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            RYAZ = "RYA,YAR,PSK,TVE,PLT,MOS,NOV"
+            SALA = "GAL,CAS,CAT,NAV,GRA,ARA,POR"
+		    SALI = "ENG,LAN,YOR,NOL,CRN,WLS"
+            SAME = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            SAMO = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            SAMS = "GRE,ATH,ACH,MOE,NAX,CEP,CRT,TRE"
+            SAND = "POL,MAZ,KRA,PRU,KUR,RIG"
+            SARD = "SAR,COR,SIE,NAP,URB,PRO"
+            SARU = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            SATA = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            SAVO = "SAV,SAR,PAR,PIS,PRO,MAN,MLO,MOD,ETR,FER,GEN,SIE,LOR"
+		    SAXO = "SAX,BAD,PAL,MAI,SLZ,SAX,WBG,ANS,WUR,BOH,BRA"
+		    SCHW = "SWI,SAV,MLO,LOR,WUR"
+		    SCOT = "SCO,NOL,YOR,LAN"
+            SELJ = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ" 
+		    SERB = "SER,BOS,MON,RAG,ALB,WAL,TRA,BUL"
+            SEVI = "GRA,CAT,NAV,ARA,POR,GAL,CAS"
+            SGAL = "GAL,NAV,CAT,GRA,ARA,CAS,POR"
+		    SHIR = "PER,KHO,QAR,DUR"                       
+            SICI = "SIC,COR,NAP,PAR,PIS,SIE,TUS,URB,MAN,GEN,VEN,AQU"
+		    SILE = "SIL,LUN,POM,BRA"
+            SINA = "CYP,CRT,NAX,CEP"
+            SINO = "CND,DUL,KAR,SYR,IRQ"            
+	    SJAE = "DAN,SCA,MKL,GOT,SHL,HAM,BRE,LUN,SWE,NOR,FIN"
+            SKAN = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            SLAV = "AQU,STY,SLZ,TIR,PAL"
+            SLOV = "AQU,STY,SLZ,TIR,PAL"
+            SMAL = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            SMOL = "PSK,MOS,NOV,RYA,TVE,PLT,YAR"
+            SOUM = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            SPMA = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            SPOL = "URB,TUS,MOD,PAR,MLO,MAN,SIE,PIS,FER,GEN,VEN,AQU,NAP,SIC"
+            STEI = "STY,SLZ,AQU,TIR,PAL"
+		    STRA = "SCO,NOL,YOR,LAN"
+            STRY = "CND,DUL,KAR,SYR,IRQ"
+		    SUSS = "ENG,LAN,YOR,NOL,CRN,WLS"
+            SUZD = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            SVIG = "SHL,HAM,LUN,MKL,DAN"
+		    SWAB = "ALS,LOR,PAL,TRI,HES,MAI"
+            SWED = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+		    SWIS = "SWI,SAV,MLO,LOR,WUR"
+            SYRI = "DUL,KHO,QAR,PER,IRQ"
+		    SZEK = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    TABR = "PER,KHO,QAR,DUR"            
+		    TANG = "FEZ,MOR,ALG,TRP,TUN,MAM"
+            TAVA = "FIN,SCA,SWE,GOT,SHL,NOR,DAN"
+            TEJO = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            TEKK = "NAX,CEP,CRT,CYP,MOE"
+		    TEME = "HUN,TRA,WAL,ALB,RAG,MON,BOS,SER"
+		    TEMP = "KNI,LIT,TEU"
+		    TEUT = "TEU,LIT,KNI"
+            THES = "MOE,ATH,ACH,GRE,NAX,TRE"
+            THRA = "CND,DUL,KAR,SYR,IRQ"
+		    THUR = "THU,WUR,ANS,PAL,WBG,MAI,BAD"
+		    TIGR = "QAR,KHO,DUR,PER"            
+		    TIRO = "TIR,HAB,BAV,BOH,SLZ,SAX,PAL,WBG,ANS,MAI,WUR,BAD"
+            TOLE = "CAS,CAT,GAL,NAV,GRA,ARA,POR"
+            TORK = "PSK,MOS,NOV,RYA,TVE,PLT,YAR"
+            TOSC = "TUS,MOD,PAR,MLO,MAN,SIE,PIS,FER,GEN,VEN,AQU,NAP,SIC"
+		    TOUL = "TOU,FOI,AMG,BOU,ORL,ALS,BUR,CHP,DAU,GUY,NEV,NRM,AUV,PRO,FRA,BRI"
+		    TRAN = "KZH,KHI,SHY,KOK"
+            TRAP = "TRE,CND,DUL,KAR,SYR,IRQ"
+            TREB = "TRE,CND,DUL,KAR,SYR,IRQ"
+		    TRIP = "TRP,TUN,MOR,FEZ,MAM,ALG"
+            TRON = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+		    TUNI = "TUN,TRP,MOR,FEZ,MAM,ALG"
+            TURK = "TUR,CND,DUL,KAR,SYR,KAZ,DUR,KHO,PER,IRQ"
+            TURO = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            TVER = "TVE,PLT,MOS,NOV,RYA,PSK,YAR"
+		    TYRE = "DUL,KHO,QAR,PER"            
+            UGRI = "KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,UKR,TVE,PLT,RYA,QAS,GEO"
+		    ULST = "TYR,IRE,MNS,CNN,LEI"
+		    UPLO = "LOR,HES,MUN,OLD,BRE,HAM,LUN,BRU,KOL,LIE,TRI,KLE"
+            UPPL = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            URAL = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            USEZ = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+            VALE = "CAT,GAL,NAV,GRA,ARA,CAS,POR"
+		    VARN = "BUL,TRA,WAL,BOS,SER,MON,RAG,ALB,WAL"
+            VAST = "SWE,SCA,GOT,SHL,FIN,NOR,DAN"
+            VENE = "VEN,AQU,GEN,MAN,TUS,SIE,PIS,PAR,NAP,SIC"
+            VENI = "VEN,AQU,GEN,MAN,TUS,SIE,PIS,PAR,NAP,SIC"
+            VERO = "MAN,FER,URB,PAR,MLO,TUS,SIE,PIS,MOD,GEN,VEN,AQU,NAP,SIC"    
+            VIDI = "CND,DUL,KAR,SYR,IRQ"
+            VISE = "POR,GAL,CAT,NAV,GRA,CAS,ARA"
+		    VLAC = "WAL,MOL,TRA,BUL,BOS,SER,CRO,BOS,MON,RAG,ALB"
+            VLAD = "MOS,NOV,PSK,RYA,TVE,PLT,YAR"
+            VOLG = "UKR,KAZ,CRI,NOG,AST,SIB,ZAZ,YAR,TVE,PLT,RYA,QAS,GEO"
+            VOLH = "POL,MAZ,KRA,PRU,KUR,RIG"
+            VOTE = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"            
+		    WALE = "WLS,CRN,LAN,YOR,NOL"
+		    WALL = "WAL,MOL,TRA,BUL,BOS,SER,CRO,BOS,MON,RAG,ALB"
+		    WARW = "ENG,LAN,YOR,NOL,CRN,WLS"
+		    WEIS = "SCO,NOL,YOR,LAN"
+            WIEL = "POL,MAZ,KRA,PRU,KUR,RIG"
+            WSAM = "NOR,SCA,GOT,SHL,FIN,SWE,DAN"
+            YARO = "YAR,MOS,NOV,PSK,RYA,TVE,PLT"        
+            YATV = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"
+		    YORK = "YOR,LAN,NOL,CRN,WLS,ENG"
+            ZARA = "ARA,CAT,GAL,CAS,POR,NAV,GRA"    
+		    ZARB = "CRO,BOS,SER,RAG,MON,ALB,TRA,WAL"
+            ZEMI = "LIT,PSK,MAZ,DNZ,KRA,PRU,RIG,KUR"            
+		    ZENA = SHR
+		    ZIRI = "MOR,FEZ,ALG,TRP,TUN,MAM"
+		    ZIYA = SHR
+	    }
+	    unavailable = { .add = { KHO DNZ KRA LIV RIG SPI FRN WES ETR NAP IRQ SYR }  }
+		tag_pool = {
+		    .add = {
+				ACH
+				AKK
+				ALB
+				ALG
+				ALH
+				ALS
+				AMG
+				ANH
+				ANS
+				AQU
+				ARA
+				ARM
+				AST
+				ATH
+				AUV
+				AVI
+				AYD
+				BAD
+				BAV
+				BOH
+				BOS
+				BOU
+				BRA
+				BRB
+				BRE
+				BRI
+				BRU
+				BUL
+				BUR
+				BYZ
+				CAS
+				CAT
+				CEP
+				CHP
+				CND
+				CNN
+				COR
+				CRI
+				CRN
+				CRO
+				CRT
+				CYP
+				DAN
+				DAU
+				DNZ
+				DUL
+				ETR
+				FER
+				FEZ
+				FIN
+				FLA
+				FOI
+				FRI
+				FRN
+				GAL
+				GEL
+				GEN
+				GEO
+				GER
+				GOL
+				GOT
+				GRA
+				GRE
+				GUY
+				HAB
+				HAI
+				HAM
+				HAN
+				HES
+				HOL
+				HUN
+				IRE
+				IRQ
+				ITA
+				KAR
+				KAZ
+				KHO
+				KLE
+				KNI
+				KOL
+				KRA
+				KUR
+				LAN
+				LEI
+				LIE
+				LIT
+				LIV
+				LOR
+				LUN
+				LUX
+				MAG
+				MAI
+				MAM
+				MAN
+				MAZ
+				MEI
+				MKL
+				MLO
+				MNS
+				MOD
+				MOE
+				MOL
+				MON
+				MOR
+				MOS
+				MUN
+				NAP
+				NAV
+				NAX
+				NEV
+				NOL
+				NOR
+				NOV
+				NRM
+				NUB
+				OLD
+				ORL
+				PAL
+				PAR
+				PIS
+				PLT
+				POL
+				POM
+				POR
+				PRO
+				PRU
+				PSK
+				QAR
+				QAS
+				RAG
+				RIG
+				RYA
+				SAR
+				SAV
+				SAX
+				SCO
+				SCA
+				SER
+				SHL
+				SIC
+				SIE
+				SIL
+				SLZ
+				SPI
+				STY
+				SWE
+				SWI
+				SYR
+				TEU
+				THU
+				TIR
+				TOU
+				TRA
+				TRE
+				TRI
+				TRP
+				TUN
+				TUR
+				TUS
+				TVE
+				TYR
+				UKR
+				URB
+				UTR
+				VEN
+				WAL
+				WBG
+				WES
+				WLS
+				WUR
+				YAR
+				YOR
+				ZAZ
+			}
+		}
+    }
+}
+
+#this is used to select which version of EU3 to install to
+#it contains one first field:
+#    autodetect=XXX where XXX is either
+#               true : try to autodetect
+#               false : don't try to autodetect (popup)
+#               (version) : set the version to use (e.g. NA = {...})
+#and a list of other fields in the form of:
+#    XXXX = { name="YYYY" autodetect="ZZZZ" }
+#        XXXX is the name of the version (what you want
+#             but in sync with what is declared in the previous sections :
+#             culture, province, tags
+#        YYYY is the string that will be shown to the user if autodetection
+#             is disabled or fails
+#        ZZZZ is either the string "default" (default choice if all other fail)
+#             or a comma separated list of country tags specific to that version
+#the order is important because the last entry that matches is accepted.
+#
+#example:
+#    NA =  { name = "Napoleon Ambition"    autodetect="DNZ,KRA,LIV,RIG" }
+#
+selection = {
+    autodetect=true
+    # autodetect=false
+    HttT =  { name = "Heir to the Throne"            autodetect="default" }
+}

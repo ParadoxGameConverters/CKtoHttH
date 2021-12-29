@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<body bgcolor="white">
+
+Provides tools to parse and analyze paradox save game files. 
+
+
+<h2>Related Documentation</h2>
+
+For tutorials please see:
+<ul>
+  <li>Brides.java, a program that extract potential brides from a Crusader Kings save file</li>
+  <li>Collapse.java, a program that exposes a paradox save file structure</li>
+  <li>Trim.java, a program that removes needless characters from a Crusader Kings save file</li>
+</ul>
+
+<h2>Class and Interface summary, from the lowest level to the highest level</h2>
+<ul>
+<li>The {@link pxAnalyzer.FileLoader} class implements a way of reading files efficiently.</li>
+<li>The {@link pxAnalyzer.Token} class describes the expected results (tokens) returned by a parser.</li>
+<li>The {@link pxAnalyzer.Token.Tokenizer} interface exposes the interface expected by the grammatical analyzer.</li>
+<li>The {@link pxAnalyzer.ReaderParser} class implements the Tokenizer interface from a Reader.</li>
+<li>The {@link pxAnalyzer.FastParser} class implements a much more efficient Tokenizer interface from a byte array.</li>
+<li>The {@link pxAnalyzer.Analyzer} class provides the basic grammatical analyzer tool.</li>
+<li>The {@link pxAnalyzer.Analyzer.Hooks} interface exposes the callbacks expected by the grammatical analyzer so that the user can extract information during the analysis process.</li>
+<li>The {@link pxAnalyzer.PXChooser} class provides methods to acquire a Hooks implementation whose purpose is to filter out unneeded data ; it also provides for the opportunity to insert a new kind of callbacks.</li>
+<li>The {@link pxAnalyzer.PXChooser.AnalyzerCallbacks} class describes the class to derive to implement the new kind of callbacks.</li>
+<li>The {@link pxAnalyzer.PXChooser.BasicAnalyzerCallbacks} class gives a full implementation of the previous class, with limited features.</li>
+<li>The {@link pxAnalyzer.PXTree.Field} derived classes allow direct access the save file data.</li>
+<li>The {@link pxAnalyzer.PXTree.TreeHooks} class is a Hooks implementation which builds the Field tree while analyzing the save file</li>
+<li>The {@link pxAnalyzer.Patterns} class defines a grammar to define the field hierarchy we are interested in, and a way to easily attach callbacks to fields</li>
+<li>The {@link pxAnalyzer.Patterns.Callbacks} interface exposes the expected method for a class to be used as a callback.</li>
+<li>The {@link pxAnalyzer.PXTreeChooser} class provides a high level implementation of Hooks merging PXTree and PXChooser capabilities.</li>
+<li>The {@link pxAnalyzer.PXTreeChooser.BasicCallback} interface exposes the expected methods for a class to become a callback for the exclusive use of the applyTemplate method.</li>
+<li>The {@link pxAnalyzer.PXTreeChooser.TreeCallbacks} class is a working and probably sufficient implementation for AnalyzerCallbacks.</li>
+<li>The {@link pxAnalyzer.PXAdvancedAnalyzer} class wraps the whole thing down in a neat-and-easy-to-use way.</li>
+</ul>
+
+<h2>Note on use</h2>
+It is suggested that you begin by the PXAdvancedAnalyzer class. It is the most advanced class, and it provides for an easy first access to the library abilities.<p>
+After you understand how to use it, you can then explore the other classes.
+As the examples show, you may sometimes prefer to use one of the lesser class,
+PXTree or PXChooser er even Analyzer, in order to save memory or improve performances.<p>
+
+
+</body>
+</html>
